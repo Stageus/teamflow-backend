@@ -16,6 +16,11 @@ interface ICustomError {
 }
 
 export class CustomError implements ICustomError {
+    private createError(message: string, status_code: number): IErrorHandler {
+        const error = new Error(message) as IErrorHandler
+        error.status_code = status_code
+        return error
+    }
     errorHandler(err: IErrorHandler, req: Request, res: Response, next: NextFunction): void {
         if (
             err.message === "jwt expired" ||
@@ -33,50 +38,26 @@ export class CustomError implements ICustomError {
     }
 
     badRequestException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 400
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 400))
     }
 
     conflictException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 409
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 409))
     }
 
     forbiddenException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 403
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 403))
     }
 
     internalServerErrorException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 500
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 500))
     }
 
     notFoundException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 404
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 404))
     }
 
     unauthorizedException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => {
-            const error = new Error(message) as IErrorHandler
-            error.status_code = 401
-            next(error)
-        }
+        return (req, res, next) => next(this.createError(message, 401))
     }
 }
