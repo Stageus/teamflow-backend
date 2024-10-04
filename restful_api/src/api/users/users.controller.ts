@@ -5,6 +5,8 @@ import { ResponseFilter } from "../../common/responseFilter/responseFilter";
 import axios from "axios";
 import { googleClientId, googleClientSecret, googleRedirectUrl } from "../../common/const/environment";
 import { CustomError } from "../../common/exception/customError";
+import { UserDto } from "./dto/users.dto";
+import { UserService } from "./users.service";
 
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
@@ -14,7 +16,9 @@ export class UserController implements IUserController {
     private responseFilter: ResponseFilter
     private customError: CustomError
 
-    constructor() {
+    constructor(
+        private readonly userService: UserService
+    ) {
         this.responseFilter = new ResponseFilter()
         this.customError = new CustomError()
     }
@@ -44,7 +48,7 @@ export class UserController implements IUserController {
         if (req.query.error === "access_denied") {
             this.customError.forbiddenException('사용자가 수집 정보를 비동의 함')
         }
-        
+
         const token_response = await axios.post<{ access_token : string }>(
             'https://oauth2.googleapis.com/token',
             {
@@ -70,5 +74,15 @@ export class UserController implements IUserController {
                 headers: { Authorization: `Bearer ${tokens.access_token}`}
             }
         )
+
+        const googleEmail = userInfoResponse.data.email
+        const googleProfileImage = userInfoResponse.data.picture
+
+        const userDto = new UserDto({
+            email: googleEmail,
+            profile: googleProfileImage
+        })
+
+        const isUser = await this.userService.selectUser(userDto)
     }
 }
