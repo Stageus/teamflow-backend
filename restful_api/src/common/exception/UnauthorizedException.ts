@@ -1,7 +1,10 @@
-import { Exception } from "./exception";
+import { Request, Response, NextFunction } from "express";
+import { ErrorHandler } from "./errorHandler";
 
-export class UnauthorizedException extends Exception {
-    constructor(message: string) {
-        super(401, message)
+export function unauthorizedException(message: string) {
+    return function (req: Request, res: Response, next: NextFunction) {
+        const error = new Error(message) as ErrorHandler
+        error.status_code = 401
+        next(error)
     }
 }
