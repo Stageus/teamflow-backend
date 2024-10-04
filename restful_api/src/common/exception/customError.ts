@@ -7,12 +7,12 @@ interface IErrorHandler extends Error {
 
 interface ICustomError {
     errorHandler(err: IErrorHandler, req: Request, res: Response, next: NextFunction): void
-    badRequestException(message: string): Function
-    conflictException(message: string): Function
-    forbiddenException(message: string): Function
-    internalServerErrorException(message: string): Function
-    notFoundException(message: string): Function
-    unauthorizedException(message: string): Function
+    badRequestException(message: string): void
+    conflictException(message: string): void
+    forbiddenException(message: string): void
+    internalServerErrorException(message: string): void
+    notFoundException(message: string): void
+    unauthorizedException(message: string): void
 }
 
 export class CustomError implements ICustomError {
@@ -32,48 +32,48 @@ export class CustomError implements ICustomError {
         })
     }
 
-    badRequestException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    badRequestException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 400
             next(error)
         }
     }
 
-    conflictException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    conflictException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 409
             next(error)
         }
     }
 
-    forbiddenException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    forbiddenException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 403
             next(error)
         }
     }
 
-    internalServerErrorException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    internalServerErrorException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 500
             next(error)
         }
     }
 
-    notFoundException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    notFoundException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 404
             next(error)
         }
     }
 
-    unauthorizedException(message: string): Function {
-        return function (req: Request, res: Response, next: NextFunction) {
+    unauthorizedException(message: string): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             const error = new Error(message) as IErrorHandler
             error.status_code = 401
             next(error)
