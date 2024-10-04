@@ -2,6 +2,7 @@ import "dotenv/config"
 import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from "cookie-parser"
 import { CustomError } from "./src/common/exception/customError"
+import { serverPort } from "./src/common/const/environment"
 
 const app = express()
 
@@ -13,4 +14,4 @@ const customError = new CustomError
 app.use(customError.conflictException("router not found"))
 app.use(customError.errorHandler)
 
-app.listen(3001, () => console.log("listening port on 3001"))
+app.listen(serverPort, () => console.log(`listening port on ${serverPort}`))
