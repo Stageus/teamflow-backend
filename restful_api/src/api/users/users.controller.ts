@@ -84,5 +84,9 @@ export class UserController implements IUserController {
         })
 
         const isUser = await this.userService.selectUser(userDto)
+
+        if (typeof isUser.userIdx === "undefined") {
+            
+        }
     }
 }
