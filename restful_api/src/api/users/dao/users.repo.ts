@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { UserDto } from "../dto/users.dto";
 
 interface IUserRepository {
-
+    selectUserByEmail(userDto: UserDto, conn: Pool): Promise<void>
 }
 
 export class UserRepository implements IUserRepository {
