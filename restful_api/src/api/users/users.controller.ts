@@ -11,6 +11,7 @@ import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "
 
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
+    googleLoginCallback(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class UserController implements IUserController {
@@ -25,22 +26,17 @@ export class UserController implements IUserController {
     }
 
     googleLogin(req: Request, res: Response, next: NextFunction): void {
-        const scopes = [
-            "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile",
-        ]
-
         const state = crypto.randomBytes(32).toString("hex")
 
-        const authorizationUrl = ouath2Client.generateAuthUrl({
-            access_type: "offline",
-            include_granted_scopes: true,
-            scope: scopes,
-            state: state,
-            response_type: "code"
-        })
+        let googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth"
+        googleAuthUrl += `?client_id=${googleClientId}`
+        googleAuthUrl += `&access_type=offline`
+        googleAuthUrl += `&redirect_uri=${googleRedirectUrl}`
+        googleAuthUrl += `&response_type=code`
+        googleAuthUrl += `&state=${state}`
+        googleAuthUrl += `&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`
 
-        this.responseFilter.response200({ url: authorizationUrl })(req, res, next)
+        this.responseFilter.response200({ url: googleAuthUrl })(req, res, next)
     }
 
     async googleLoginCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -56,12 +52,12 @@ export class UserController implements IUserController {
                 code: authorizationCode,
                 client_id: googleClientId,
                 client_secret: googleClientSecret,
-                redircet_url: googleRedirectUrl,
+                redirect_uri: googleRedirectUrl,
                 grant_type: 'authorization_code'
             },
             {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type' : 'application/x-www-form-urlencoded'
                 }
             }
         )
@@ -87,21 +83,21 @@ export class UserController implements IUserController {
         const isUser = await this.userService.selectUser(userDto)
 
         if (typeof isUser.userIdx === "undefined") {
-            const signUpToken = generateSignUpToken(userDto.email!, userDto.profile!)
+            const signUpToken = generateSignUpToken(userDto)
 
             this.responseFilter.response203({signUpToken})(req, res, next)
+        } else {
+            const accessToken = generateAccessToken(userDto)
+            const refershToken = generateRefreshToken(userDto)
+
+            res.cookie("refreshToken", refershToken, {
+                httpOnly: true,
+                secure: false,
+                maxAge: 7 * 3600 * 24,
+                sameSite: "strict"
+            })
+            
+            this.responseFilter.response203({accessToken})(req, res, next)
         }
-
-        const accessToken = generateAccessToken(userDto.userIdx!)
-        const refershToken = generateRefreshToken(userDto.userIdx!)
-
-        res.cookie("refreshToken", refershToken, {
-            httpOnly: true,
-            secure: false,
-            maxAge: 7 * 3600 * 24,
-            sameSite: "strict"
-        })
-        
-        this.responseFilter.response203({accessToken})(req, res, next)
     }
 }

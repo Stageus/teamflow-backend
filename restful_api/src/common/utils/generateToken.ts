@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken'
 import { jwtAccessSecretKey, jwtRefreshSecretKey } from '../const/environment'
+import { UserDto } from '../../api/users/dto/users.dto'
 
-export function generateSignUpToken(email: string, profile: string) {
+export function generateSignUpToken(userDto: UserDto) {
     return jwt.sign(
         {
-            email: email,
-            profile: profile
+            email: userDto.email,
+            profile: userDto.profile
         },
         jwtAccessSecretKey,
         {
@@ -15,10 +16,10 @@ export function generateSignUpToken(email: string, profile: string) {
     )
 }
 
-export function generateAccessToken(user_idx: number) {
+export function generateAccessToken(userDto: UserDto) {
     return jwt.sign(
         {
-            user_idx: user_idx
+            user_idx: userDto.userIdx
         },
         jwtAccessSecretKey,
         {
@@ -28,10 +29,10 @@ export function generateAccessToken(user_idx: number) {
     )
 }
 
-export function generateRefreshToken(user_idx: number) {
+export function generateRefreshToken(userDto: UserDto) {
     return jwt.sign(
         {
-            user_idx: user_idx
+            user_idx: userDto.userIdx
         },
         jwtRefreshSecretKey,
         {
