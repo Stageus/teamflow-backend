@@ -9,4 +9,8 @@ export const pgPW = process.env.PG_PW!
 export const pgHost = process.env.PG_HOST!
 export const pgPort = process.env.PG_PORT!
 export const pgDatabase = process.env.PG_DATABASE!
-export const pgPoolMax = 5!
+export const pgPoolMax = 5
+
+export const jwtSignUpSecretKey = process.env.JWT_SIGN_UP_SECRET_KEY!
+export const jwtAccessSecretKey = process.env.JWT_ACCESS_SECRET_KEY!
+export const jwtRefreshSecretKey = process.env.JWT_REFRESH_SECRET_KEY!

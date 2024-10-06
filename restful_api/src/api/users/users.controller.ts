@@ -7,6 +7,7 @@ import { googleClientId, googleClientSecret, googleRedirectUrl } from "../../com
 import { CustomError } from "../../common/exception/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
+import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
 
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
@@ -84,5 +85,23 @@ export class UserController implements IUserController {
         })
 
         const isUser = await this.userService.selectUser(userDto)
+
+        if (typeof isUser.userIdx === "undefined") {
+            const signUpToken = generateSignUpToken(userDto.email!, userDto.profile!)
+
+            this.responseFilter.response203({signUpToken})(req, res, next)
+        }
+
+        const accessToken = generateAccessToken(userDto.userIdx!)
+        const refershToken = generateRefreshToken(userDto.userIdx!)
+
+        res.cookie("refreshToken", refershToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 7 * 3600 * 24,
+            sameSite: "strict"
+        })
+        
+        this.responseFilter.response203({accessToken})(req, res, next)
     }
 }

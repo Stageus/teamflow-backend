@@ -3,11 +3,14 @@ import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from "cookie-parser"
 import { CustomError } from "./src/common/exception/customError"
 import { serverPort } from "./src/common/const/environment"
+import userRouter from "./src/api/users/users.router"
 
 const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+
+app.use("/users", userRouter)
 
 const customError = new CustomError
 

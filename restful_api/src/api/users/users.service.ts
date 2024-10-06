@@ -3,7 +3,7 @@ import { UserDto } from "./dto/users.dto";
 import { UserRepository } from "./dao/users.repo";
 
 interface IUserService {
-    
+    selectUser(userDto: UserDto): Promise<UserDto>
 }
 
 export class UserService implements IUserService {
