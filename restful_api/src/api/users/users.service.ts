@@ -6,6 +6,10 @@ import { UserEntity } from "./entity/users.entity";
 interface IUserService {
     selectUserByEmail(userDto: UserDto): Promise<void>
     createUser(userDto: UserDto): Promise<void>
+    selectUserInfo(userDto: UserDto): Promise<void>
+    updateProfileImage(userDto: UserDto): Promise<void>
+    updateNickname(userDto: UserDto): Promise<void>
+    deleteUser(userDto: UserDto): Promise<void>
 }
 
 export class UserService implements IUserService {
@@ -55,7 +59,7 @@ export class UserService implements IUserService {
         userDto.profile = userEntity.profile
     }
 
-    async updateProfileImage(userDto: UserDto) {
+    async updateProfileImage(userDto: UserDto): Promise<void> {
         const userEntity = new UserEntity({
             userIdx: userDto.userIdx,
             profile: userDto.profile
@@ -64,7 +68,7 @@ export class UserService implements IUserService {
         await this.userRepository.putProfileImage(userEntity, this.pool)
     }
 
-    async updateNickname(userDto: UserDto) {
+    async updateNickname(userDto: UserDto): Promise<void> {
         const userEntity = new UserEntity({
             userIdx: userDto.userIdx,
             nickname: userDto.nickname
@@ -73,7 +77,7 @@ export class UserService implements IUserService {
         await this.userRepository.putNickname(userEntity, this.pool)
     }
 
-    async deleteUser(userDto: UserDto) {
+    async deleteUser(userDto: UserDto): Promise<void> {
         const userEntity = new UserEntity({
             userIdx: userDto.userIdx
         })
