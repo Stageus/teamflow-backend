@@ -14,3 +14,8 @@ export const pgPoolMax = 5
 export const jwtSignUpSecretKey = process.env.JWT_SIGN_UP_SECRET_KEY!
 export const jwtAccessSecretKey = process.env.JWT_ACCESS_SECRET_KEY!
 export const jwtRefreshSecretKey = process.env.JWT_REFRESH_SECRET_KEY!
+
+export const s3accessKey = process.env.S3_ACCESS_KEY!
+export const s3secretKey = process.env.S3_SECRET_KEY!
+export const s3region = process.env.S3_REGION!
+export const s3bucketName = process.env.S3_BUCKET_NAME!
