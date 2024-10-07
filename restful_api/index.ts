@@ -18,7 +18,10 @@ app.use("/users", userRouter)
 
 const customError = new CustomError()
 
-app.use(customError.conflictException("router not found"))
+app.use((req: Request, res: Response, next: NextFunction) => {
+    next(customError.conflictException('router not found'))
+})
+
 app.use(customError.errorHandler)
 
 app.listen(serverPort, () => console.log(`listening port on ${serverPort}`))

@@ -14,6 +14,8 @@ export class UserRepository implements IUserRepository {
             [userDto.email]
         )
 
-        userDto.userIdx = isUserResult.rows[0]
+        if (isUserResult) {
+            userDto.userIdx = isUserResult.rows[0]
+        }
     }
 }

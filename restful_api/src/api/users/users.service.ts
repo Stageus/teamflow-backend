@@ -3,7 +3,7 @@ import { UserDto } from "./dto/users.dto";
 import { UserRepository } from "./dao/users.repo";
 
 interface IUserService {
-    selectUser(userDto: UserDto): Promise<UserDto>
+    selectUser(userDto: UserDto): Promise<void>
 }
 
 export class UserService implements IUserService {
@@ -12,9 +12,7 @@ export class UserService implements IUserService {
         private readonly pool: Pool
     ) {}
 
-    async selectUser(userDto: UserDto): Promise<UserDto> {
+    async selectUser(userDto: UserDto): Promise<void> {
         await this.userRepository.selectUserByEmail(userDto, this.pool)
-
-        return userDto
     }
 }

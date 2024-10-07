@@ -8,6 +8,7 @@ import { CustomError } from "../../common/exception/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
+import { regx } from "../../common/const/regx";
 
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
@@ -27,14 +28,7 @@ export class UserController implements IUserController {
 
     googleLogin(req: Request, res: Response, next: NextFunction): void {
         const state = crypto.randomBytes(32).toString("hex")
-
-        let googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth"
-        googleAuthUrl += `?client_id=${googleClientId}`
-        googleAuthUrl += `&access_type=offline`
-        googleAuthUrl += `&redirect_uri=${googleRedirectUrl}`
-        googleAuthUrl += `&response_type=code`
-        googleAuthUrl += `&state=${state}`
-        googleAuthUrl += `&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&access_type=offline&redirect_uri=${googleRedirectUrl}&response_type=code&state=${state}&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`
 
         this.responseFilter.response200({ url: googleAuthUrl })(req, res, next)
     }
@@ -80,12 +74,12 @@ export class UserController implements IUserController {
             profile: googleProfileImage
         })
 
-        const isUser = await this.userService.selectUser(userDto)
+        await this.userService.selectUser(userDto)
 
-        if (typeof isUser.userIdx === "undefined") {
+        if (!userDto.userIdx) {
             const signUpToken = generateSignUpToken(userDto)
 
-            this.responseFilter.response203({signUpToken})(req, res, next)
+            this.responseFilter.response203({ signUpToken : signUpToken })(req, res, next)
         } else {
             const accessToken = generateAccessToken(userDto)
             const refershToken = generateRefreshToken(userDto)
@@ -97,7 +91,17 @@ export class UserController implements IUserController {
                 sameSite: "strict"
             })
             
-            this.responseFilter.response203({accessToken})(req, res, next)
+            this.responseFilter.response203({ accessToken : accessToken })(req, res, next)
         }
+    }
+
+    async signUp(req: Request, res: Response, next: NextFunction) {
+        const userDto = new UserDto({
+            nickname : req.body.nickname,
+            email : req.body.signUpTokenDecoded.email,
+            profile: req.body.signUpTokenDecoded.profile
+        })
+
+        console.log(userDto)
     }
 }
