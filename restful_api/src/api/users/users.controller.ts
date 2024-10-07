@@ -8,6 +8,8 @@ import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
 import { regx } from "../../common/const/regx";
+import { upload } from "../../common/utils/s3";
+import { MulterError } from "multer";
 
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
@@ -99,8 +101,8 @@ export class UserController implements IUserController {
     async signUp(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
             nickname : req.body.nickname,
-            email : req.body.signUpTokenDecoded.email,
-            profile: req.body.signUpTokenDecoded.profile
+            email : req.body.email,
+            profile: req.body.profile
         })
 
         await this.userService.createUser(userDto)
@@ -137,8 +139,42 @@ export class UserController implements IUserController {
         }
     }
 
-    async putProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    putProfileImage(req: Request, res: Response, next: NextFunction): void {
+        const imageUpload = upload.single('profileImage')
 
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        imageUpload(req, res, async (err) => {
+            if (err instanceof MulterError && err.code === 'LIMIT_FILE_SIZE') {
+                return next(this.customError.badRequestException('파일 사이즈가 큼'))
+            }
+
+            if (err) {
+                return next(this.customError.internalServerErrorException('an error occurred during the upload'))
+            }
+
+            try {
+                const image = req.file as Express.MulterS3.File
+
+                if (!image) {
+                    this.customError.badRequestException('이미지가 존재하지 않음')
+                }
+
+                userDto.profile = image.location
+
+                await this.userService.updateProfileImage(userDto)
+
+                if (!req.body.accessToken) {
+                    res.status(200).send()
+                } else {
+                    res.status(203).send({ accessToken: req.body.accessToken })
+                }
+            } catch (err) {
+                next(err)
+            }
+        })
     }
 
     async putNickname(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -154,5 +190,15 @@ export class UserController implements IUserController {
         } else {
             res.status(203).send({ accessToken: req.body.accessToken })
         }
+    }
+
+    async withdrawal(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        await this.userService.deleteUser(userDto)
+
+        res.status(200).send()
     }
 }
