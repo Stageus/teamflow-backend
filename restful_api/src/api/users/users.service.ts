@@ -4,7 +4,8 @@ import { UserRepository } from "./dao/users.repo";
 import { UserEntity } from "./entity/users.entity";
 
 interface IUserService {
-    selectUser(userDto: UserDto): Promise<void>
+    selectUserByEmail(userDto: UserDto): Promise<void>
+    createUser(userDto: UserDto): Promise<void>
 }
 
 export class UserService implements IUserService {
@@ -13,7 +14,7 @@ export class UserService implements IUserService {
         private readonly pool: Pool
     ) {}
 
-    async selectUser(userDto: UserDto): Promise<void> {
+    async selectUserByEmail(userDto: UserDto): Promise<void> {
         const userEntity = new UserEntity({
             email: userDto.email
         })
@@ -33,5 +34,18 @@ export class UserService implements IUserService {
         })
 
         await this.userRepository.signUp(userEntity, this.pool)
+    }
+
+    async selectUserInfo(userDto: UserDto): Promise<void> {
+        const userEntity = new UserEntity({
+            userIdx: userDto.userIdx
+        })
+
+        await this.userRepository.getUserProfile(userEntity, this.pool)
+        await this.userRepository.getUserTSCount(userDto, userEntity, this.pool)
+
+        userDto.nickname = userEntity.nickname
+        userDto.email = userEntity.email
+        userDto.profile = userEntity.profile
     }
 }

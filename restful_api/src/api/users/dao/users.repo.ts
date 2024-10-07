@@ -5,19 +5,20 @@ import { UserEntity } from "../entity/users.entity";
 interface IUserRepository {
     findUserByEmail(userEntity: UserEntity, conn: Pool): Promise<void>
     signUp(userEntity: UserEntity, conn: Pool): Promise<void>
+    getUserProfile(userEntity: UserEntity, conn: Pool): Promise<void>
 }
 
 export class UserRepository implements IUserRepository {
     constructor(private readonly pool: Pool) {}
 
     async findUserByEmail(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
-        const isUserResult = await conn.query(
+        const isUserQueryResult = await conn.query(
             `SELECT user_idx FROM team_flow_management.user WHERE email = $1`,
             [userEntity.email]
         )
 
-        if (isUserResult) {
-            userEntity.userIdx = isUserResult.rows[0].user_idx
+        if (isUserQueryResult) {
+            userEntity.userIdx = isUserQueryResult.rows[0].user_idx
         }
     }
 
@@ -26,5 +27,35 @@ export class UserRepository implements IUserRepository {
             'INSERT INTO team_flow_management.user (nickname, email, profile_image) VALUES ($1, $2, $3)',
             [userEntity.nickname, userEntity.email, userEntity.profile]
         )
+    }
+
+    async getUserProfile(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
+        const userInfoQueryResult = await conn.query(
+            `SELECT nickname, email, profile_image FROM team_flow_management.user WHERE user_idx=$1`,
+            [userEntity.userIdx]
+        )
+
+        userEntity.nickname = userInfoQueryResult.rows[0].nickname
+        userEntity.email = userInfoQueryResult.rows[0].email
+        userEntity.profile = userInfoQueryResult.rows[0].profile_image
+    }
+
+    async getUserTSCount(userDto: UserDto, userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query('BEGIN') 
+       
+        const userOwnTSQueryResult = await conn.query(
+            `SELECT COUNT(*) as count FROM team_flow_management.team_space WHERE owner_idx=$1 GROUP BY owner_idx`,
+            [userEntity.userIdx]
+        )
+
+        const userTSQueryResult = await conn.query(
+            `SELECT COUNT(*) as count FROM team_flow_management.ts_member WHERE user_idx=$1 GROUP BY user_idx`,
+            [userEntity.userIdx]
+        )
+
+        await conn.query('COMMIT')
+
+        userDto.teamSpaceOwnCount = userOwnTSQueryResult.rows[0]? userOwnTSQueryResult.rows[0].count : 0
+        userDto.teamSpaceCount = userTSQueryResult.rows[0]? userTSQueryResult.rows[0].count : 0
     }
 }

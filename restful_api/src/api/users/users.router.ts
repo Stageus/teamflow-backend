@@ -22,11 +22,17 @@ userRouter.get(
 
 userRouter.post(
     "/", 
-    checkVerifyToken.checkSignUpToken(),
+    checkVerifyToken.checkVerifySignUpToken(),
     userDto.checkRegx([
         ['nickname', regx.nicknameRegx]
     ]),
     wrapper(controller.userController.signUp.bind(controller.userController))
+)
+
+userRouter.get(
+    "/",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.userController.getUserInfo.bind(controller.userController))
 )
 
 export default userRouter
