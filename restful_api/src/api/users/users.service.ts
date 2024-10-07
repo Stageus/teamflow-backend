@@ -49,8 +49,13 @@ export class UserService implements IUserService {
         userDto.profile = userEntity.profile
     }
 
-    async updateProfileImage() {
+    async updateProfileImage(userDto: UserDto) {
+        const userEntity = new UserEntity({
+            userIdx: userDto.userIdx,
+            profile: userDto.profile
+        })
 
+        await this.userRepository.putProfileImage(userEntity, this.pool)
     }
 
     async updateNickname(userDto: UserDto) {
