@@ -13,12 +13,13 @@ export class UserRepository implements IUserRepository {
 
     async findUserByEmail(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
         const isUserQueryResult = await conn.query(
-            `SELECT user_idx FROM team_flow_management.user WHERE email = $1`,
+            `SELECT user_idx, is_deleted FROM team_flow_management.user WHERE email = $1`,
             [userEntity.email]
         )
 
         if (isUserQueryResult) {
             userEntity.userIdx = isUserQueryResult.rows[0].user_idx
+            userEntity.isDeleted = isUserQueryResult.rows[0].is_deleted
         }
     }
 
@@ -26,6 +27,13 @@ export class UserRepository implements IUserRepository {
         await conn.query(
             'INSERT INTO team_flow_management.user (nickname, email, profile_image) VALUES ($1, $2, $3)',
             [userEntity.nickname, userEntity.email, userEntity.profile]
+        )
+    }
+
+    async reSignUp(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.user SET nickname=$1, profile_image=$2, is_deleted=false WHERE user_idx=$3`,
+            [userEntity.nickname, userEntity.profile, userEntity.userIdx]
         )
     }
 
