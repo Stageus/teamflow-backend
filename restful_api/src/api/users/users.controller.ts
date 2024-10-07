@@ -115,7 +115,6 @@ export class UserController implements IUserController {
 
         if (!req.body.accessToken) {
             res.status(200).send({
-                userIdx: userDto.userIdx,
                 nickname: userDto.nickname,
                 email: userDto.email,
                 profileImage: userDto.profile,
@@ -124,7 +123,6 @@ export class UserController implements IUserController {
             })
         } else {
             res.status(203).send({
-                userIdx: userDto.userIdx,
                 nickname: userDto.nickname,
                 email: userDto.email,
                 profileImage: userDto.profile,

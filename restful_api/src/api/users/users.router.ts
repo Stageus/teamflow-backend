@@ -32,9 +32,6 @@ userRouter.post(
 userRouter.get(
     "/",
     checkVerifyToken.checkVerifyAccessToken(),
-    userDto.checkRegx([
-        ['userIdx', regx.idxRegx]
-    ]),
     wrapper(controller.userController.getUserInfo.bind(controller.userController))
 )
 

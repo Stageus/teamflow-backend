@@ -42,16 +42,16 @@ export class UserRepository implements IUserRepository {
 
     async getUserTSCount(userDto: UserDto, userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
         const userOwnTSQueryResult = await conn.query(
-            `SELECT COUNT(*) FROM team_flow_management.team_space WHERE owner_idx=$1 GROUP BY owner_idx`,
+            `SELECT COUNT(*) as count FROM team_flow_management.team_space WHERE owner_idx=$1 GROUP BY owner_idx`,
             [userEntity.userIdx]
         )
 
         const userTSQueryResult = await conn.query(
-            `SELECT COUNT(*) FROM team_flow_management.ts_member WHERE user_idx=$1 GROUP BY user_idx`,
+            `SELECT COUNT(*) as count FROM team_flow_management.ts_member WHERE user_idx=$1 GROUP BY user_idx`,
             [userEntity.userIdx]
         )
-
-        userDto.teamSpaceOwnCount = userOwnTSQueryResult.rows[0].COUNT
-        userDto.teamSpaceCount = userTSQueryResult.rows[0].COUNT
+        
+        userDto.teamSpaceOwnCount = userOwnTSQueryResult.rows[0]? userOwnTSQueryResult.rows[0].count : 0
+        userDto.teamSpaceCount = userTSQueryResult.rows[0]? userTSQueryResult.rows[0].count : 0
     }
 }
