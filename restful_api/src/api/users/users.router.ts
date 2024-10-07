@@ -35,4 +35,19 @@ userRouter.get(
     wrapper(controller.userController.getUserInfo.bind(controller.userController))
 )
 
+userRouter.put(
+    "/profile-image",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.userController.putProfileImage.bind(controller.userController))
+)
+
+userRouter.put(
+    "/nickname",
+    checkVerifyToken.checkVerifyAccessToken(),
+    userDto.checkRegx([
+        ['nickname', regx.nicknameRegx]
+    ]),
+    wrapper(controller.userController.putNickname.bind(controller.userController))
+)
+
 export default userRouter
