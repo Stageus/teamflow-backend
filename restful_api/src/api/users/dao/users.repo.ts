@@ -58,4 +58,15 @@ export class UserRepository implements IUserRepository {
         userDto.teamSpaceOwnCount = userOwnTSQueryResult.rows[0]? userOwnTSQueryResult.rows[0].count : 0
         userDto.teamSpaceCount = userTSQueryResult.rows[0]? userTSQueryResult.rows[0].count : 0
     }
+
+    async putProfileImage() {
+
+    }
+
+    async putNickname(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.user SET nickname=$1 WHERE user_idx=$2`,
+            [userEntity.nickname, userEntity.userIdx]
+        )
+    }
 }

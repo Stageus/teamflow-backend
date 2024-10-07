@@ -38,7 +38,7 @@ userRouter.get(
 userRouter.put(
     "/profile-image",
     checkVerifyToken.checkVerifyAccessToken(),
-    wrapper(controller.userController.updateProfileImage.bind(controller.userController))
+    wrapper(controller.userController.putProfileImage.bind(controller.userController))
 )
 
 userRouter.put(
@@ -47,7 +47,7 @@ userRouter.put(
     userDto.checkRegx([
         ['nickname', regx.nicknameRegx]
     ]),
-    wrapper(controller.userController.updateNickname.bind(controller.userController))
+    wrapper(controller.userController.putNickname.bind(controller.userController))
 )
 
 export default userRouter

@@ -46,7 +46,7 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                 const refreshToken = req.cookies.refreshToken
 
                 if (!accessTokenHeader) {
-                    throw this.customError.badRequestException('access token header is missing')
+                    throw this.customError.unauthorizedException('access token header is missing')
                 }
 
                 if (!refreshToken) {

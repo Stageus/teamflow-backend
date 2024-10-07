@@ -137,16 +137,22 @@ export class UserController implements IUserController {
         }
     }
 
-    async updateProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async putProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
 
     }
 
-    async updateNickname(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async putNickname(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
             userIdx: req.body.userIdx,
             nickname: req.body.nickname
         })
 
         await this.userService.updateNickname(userDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send({ accessToken: req.body.accessToken })
+        }
     }
 }
