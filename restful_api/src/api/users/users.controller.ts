@@ -101,8 +101,8 @@ export class UserController implements IUserController {
     async signUp(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
             nickname : req.body.nickname,
-            email : req.body.signUpTokenDecoded.email,
-            profile: req.body.signUpTokenDecoded.profile
+            email : req.body.email,
+            profile: req.body.profile
         })
 
         await this.userService.createUser(userDto)
@@ -139,7 +139,7 @@ export class UserController implements IUserController {
         }
     }
 
-    async putProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    putProfileImage(req: Request, res: Response, next: NextFunction): void {
         const imageUpload = upload.single('profileImage')
 
         const userDto = new UserDto({
@@ -190,5 +190,15 @@ export class UserController implements IUserController {
         } else {
             res.status(203).send({ accessToken: req.body.accessToken })
         }
+    }
+
+    async withdrawal(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        await this.userService.deleteUser(userDto)
+
+        res.status(200).send()
     }
 }

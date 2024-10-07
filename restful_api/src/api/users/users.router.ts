@@ -50,4 +50,10 @@ userRouter.put(
     wrapper(controller.userController.putNickname.bind(controller.userController))
 )
 
+userRouter.delete(
+    "/",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.userController.withdrawal.bind(controller.userController))
+)
+
 export default userRouter

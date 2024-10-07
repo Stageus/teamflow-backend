@@ -33,6 +33,12 @@ export class UserService implements IUserService {
             profile: userDto.profile
         })
 
+        await this.userRepository.findUserByEmail(userEntity, this.pool)
+        
+        if (userEntity.isDeleted) {
+            return await this.userRepository.reSignUp(userEntity, this.pool)
+        }
+
         await this.userRepository.signUp(userEntity, this.pool)
     }
 
@@ -65,5 +71,13 @@ export class UserService implements IUserService {
         })
 
         await this.userRepository.putNickname(userEntity, this.pool)
+    }
+
+    async deleteUser(userDto: UserDto) {
+        const userEntity = new UserEntity({
+            userIdx: userDto.userIdx
+        })
+
+        await this.userRepository.withdrawal(userEntity, this.pool)
     }
 }
