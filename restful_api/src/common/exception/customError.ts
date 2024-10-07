@@ -7,12 +7,12 @@ interface IErrorHandler extends Error {
 
 interface ICustomError {
     errorHandler(err: IErrorHandler, req: Request, res: Response, next: NextFunction): void
-    badRequestException(message: string): void
-    conflictException(message: string): void
-    forbiddenException(message: string): void
-    internalServerErrorException(message: string): void
-    notFoundException(message: string): void
-    unauthorizedException(message: string): void
+    badRequestException(message: string): IErrorHandler
+    conflictException(message: string): IErrorHandler
+    forbiddenException(message: string): IErrorHandler
+    internalServerErrorException(message: string): IErrorHandler
+    notFoundException(message: string): IErrorHandler
+    unauthorizedException(message: string): IErrorHandler
 }
 
 export class CustomError implements ICustomError {
@@ -21,43 +21,45 @@ export class CustomError implements ICustomError {
         error.status_code = status_code
         return error
     }
+    
     errorHandler(err: IErrorHandler, req: Request, res: Response, next: NextFunction): void {
         if (
             err.message === "jwt expired" ||
-            err.message === "invalid signature" ||
-            err.message === "jwt must be provided"
+            err.message === "invalid token" ||
+            err.message === "jwt must be provided" ||
+            err.message === "invalid signature"
         ) {
             res.status(401).send({
                 message: err.message
             })
+        } else {
+            res.status(err.status_code || 500).send({
+                message: err.message
+            })
         }
-        
-        res.status(err.status_code || 500).send({
-            message: err.message
-        })
     }
 
-    badRequestException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 400))
+    badRequestException(message: string): IErrorHandler {
+        return this.createError(message, 400)
     }
 
-    conflictException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 409))
+    conflictException(message: string): IErrorHandler {
+        return this.createError(message, 409)
     }
 
-    forbiddenException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 403))
+    forbiddenException(message: string): IErrorHandler {
+        return this.createError(message, 403)
     }
 
-    internalServerErrorException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 500))
+    internalServerErrorException(message: string): IErrorHandler {
+        return this.createError(message, 500)
     }
 
-    notFoundException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 404))
+    notFoundException(message: string): IErrorHandler {
+        return this.createError(message, 404)
     }
 
-    unauthorizedException(message: string): (req: Request, res: Response, next: NextFunction) => void {
-        return (req, res, next) => next(this.createError(message, 401))
+    unauthorizedException(message: string): IErrorHandler {
+        return this.createError(message, 401)
     }
 }
