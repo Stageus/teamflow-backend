@@ -24,9 +24,12 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                 if (!signUpTokenHeader) {
                     throw this.customError.badRequestException('signUp token header is missing')
                 } else {
-                    const signUpTokenDecoded = jwt.verify(signUpTokenHeader, jwtSignUpSecretKey)
+                    const signUpTokenDecoded = jwt.verify(
+                        signUpTokenHeader, 
+                        jwtSignUpSecretKey) as jwt.JwtPayload
 
-                    req.body.signUpTokenDecoded = signUpTokenDecoded
+                    req.body.email = signUpTokenDecoded.email
+                    req.body.profile = signUpTokenDecoded.profile
 
                     next()
                 }
@@ -76,6 +79,8 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                         accessToken, 
                         jwtAccessSecretKey
                     ) as jwt.JwtPayload
+
+                    req.body.accessToken = accessToken
                 } else {
                     accessTokenDecoded = jwt.verify(
                         accessTokenHeader,
@@ -83,7 +88,7 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                     ) as jwt.JwtPayload
                 }
 
-                req.body.accessTokenDecoded = accessTokenDecoded
+                req.body.userIdx = accessTokenDecoded.userIdx
 
                 next()
             } catch (err) {

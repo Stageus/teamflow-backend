@@ -6,6 +6,8 @@ interface IUserDto {
     email?: string
     profile?: string
     nickname?: string
+    teamSpaceOwnCount?: number
+    teamSpaceCount?: number
 }
 
 export class UserDto implements IUserDto {
@@ -15,6 +17,8 @@ export class UserDto implements IUserDto {
     email?: string
     profile?: string
     nickname?: string
+    teamSpaceOwnCount?: number
+    teamSpaceCount?: number
 
     constructor(data?: Partial<IUserDto>) {
         if (data) {

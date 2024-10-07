@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import crypto from 'node:crypto'
 import { ouath2Client } from "../../common/const/googleOAuthClient";
-import { ResponseFilter } from "../../common/responseFilter/responseFilter";
 import axios from "axios";
 import { googleClientId, googleClientSecret, googleRedirectUrl } from "../../common/const/environment";
 import { CustomError } from "../../common/exception/customError";
@@ -16,13 +15,11 @@ interface IUserController {
 }
 
 export class UserController implements IUserController {
-    private responseFilter: ResponseFilter
     private customError: CustomError
 
     constructor(
         private readonly userService: UserService
     ) {
-        this.responseFilter = new ResponseFilter()
         this.customError = new CustomError()
     }
 
@@ -30,7 +27,9 @@ export class UserController implements IUserController {
         const state = crypto.randomBytes(32).toString("hex")
         const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&access_type=offline&redirect_uri=${googleRedirectUrl}&response_type=code&state=${state}&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`
 
-        this.responseFilter.response200({ url: googleAuthUrl })(req, res, next)
+        res.status(200).send({
+            redirectUrl: googleAuthUrl
+        })
     }
 
     async googleLoginCallback(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -74,12 +73,12 @@ export class UserController implements IUserController {
             profile: googleProfileImage
         })
 
-        await this.userService.selectUser(userDto)
+        await this.userService.selectUserByEmail(userDto)
 
         if (!userDto.userIdx) {
             const signUpToken = generateSignUpToken(userDto)
 
-            this.responseFilter.response203({ signUpToken : signUpToken })(req, res, next)
+            res.status(203).send({ signUpToken : signUpToken })
         } else {
             const accessToken = generateAccessToken(userDto)
             const refershToken = generateRefreshToken(userDto)
@@ -91,7 +90,7 @@ export class UserController implements IUserController {
                 sameSite: "strict"
             })
             
-            this.responseFilter.response203({ accessToken : accessToken })(req, res, next)
+            res.status(203).send({ accessToken : accessToken })
         }
     }
 
@@ -104,10 +103,35 @@ export class UserController implements IUserController {
 
         await this.userService.createUser(userDto)
 
-        this.responseFilter.response200()(req, res, next)
+        res.status(200).send()
     }
 
     async getUserInfo(req: Request, res: Response, next: NextFunction) {
+        const userDto = new UserDto({
+            userIdx : req.body.userIdx
+        })
 
+        await this.userService.selectUserInfo(userDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send({
+                userIdx: userDto.userIdx,
+                nickname: userDto.nickname,
+                email: userDto.email,
+                profileImage: userDto.profile,
+                teamSpaceOwnCount: userDto.teamSpaceOwnCount,
+                teamSpaceCount: userDto.teamSpaceCount
+            })
+        } else {
+            res.status(203).send({
+                userIdx: userDto.userIdx,
+                nickname: userDto.nickname,
+                email: userDto.email,
+                profileImage: userDto.profile,
+                teamSpaceOwnCount: userDto.teamSpaceOwnCount,
+                teamSpaceCount: userDto.teamSpaceCount,
+                accessToken: req.body.accessToken
+            })
+        }
     }
 }
