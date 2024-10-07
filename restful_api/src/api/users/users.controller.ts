@@ -12,6 +12,8 @@ import { regx } from "../../common/const/regx";
 interface IUserController {
     googleLogin(req: Request, res: Response, next: NextFunction): void
     googleLoginCallback(req: Request, res: Response, next: NextFunction): Promise<void>
+    signUp(req: Request, res: Response, next: NextFunction): Promise<void>
+    getUserInfo(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class UserController implements IUserController {
@@ -94,7 +96,7 @@ export class UserController implements IUserController {
         }
     }
 
-    async signUp(req: Request, res: Response, next: NextFunction) {
+    async signUp(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
             nickname : req.body.nickname,
             email : req.body.signUpTokenDecoded.email,
@@ -106,7 +108,7 @@ export class UserController implements IUserController {
         res.status(200).send()
     }
 
-    async getUserInfo(req: Request, res: Response, next: NextFunction) {
+    async getUserInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
             userIdx : req.body.userIdx
         })
@@ -115,6 +117,7 @@ export class UserController implements IUserController {
 
         if (!req.body.accessToken) {
             res.status(200).send({
+                userIdx: userDto.userIdx,
                 nickname: userDto.nickname,
                 email: userDto.email,
                 profileImage: userDto.profile,
@@ -123,6 +126,7 @@ export class UserController implements IUserController {
             })
         } else {
             res.status(203).send({
+                userIdx: userDto.userIdx,
                 nickname: userDto.nickname,
                 email: userDto.email,
                 profileImage: userDto.profile,
@@ -131,5 +135,18 @@ export class UserController implements IUserController {
                 accessToken: req.body.accessToken
             })
         }
+    }
+
+    async updateProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+
+    }
+
+    async updateNickname(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx,
+            nickname: req.body.nickname
+        })
+
+        await this.userService.updateNickname(userDto)
     }
 }
