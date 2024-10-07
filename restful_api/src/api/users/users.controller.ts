@@ -7,7 +7,6 @@ import { CustomError } from "../../common/exception/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
-import { regx } from "../../common/const/regx";
 import { upload } from "../../common/utils/s3";
 import { MulterError } from "multer";
 
@@ -16,6 +15,9 @@ interface IUserController {
     googleLoginCallback(req: Request, res: Response, next: NextFunction): Promise<void>
     signUp(req: Request, res: Response, next: NextFunction): Promise<void>
     getUserInfo(req: Request, res: Response, next: NextFunction): Promise<void>
+    putProfileImage(req: Request, res: Response, next: NextFunction): void
+    putNickname(req: Request, res: Response, next: NextFunction): Promise<void>
+    withdrawal(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class UserController implements IUserController {

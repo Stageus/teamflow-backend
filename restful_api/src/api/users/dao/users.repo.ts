@@ -6,7 +6,12 @@ import { privateType } from "../../../common/const/ch_type";
 interface IUserRepository {
     findUserByEmail(userEntity: UserEntity, conn: Pool): Promise<void>
     signUp(userEntity: UserEntity, conn: Pool): Promise<void>
+    reSignUp(userEntity: UserEntity, conn: Pool): Promise<void>
     getUserProfile(userEntity: UserEntity, conn: Pool): Promise<void>
+    getUserTSCount(userDto: UserDto, userEntity: UserEntity, conn: Pool): Promise<void>
+    putProfileImage(userEntity: UserEntity, conn: Pool): Promise<void>
+    putNickname(userEntity: UserEntity, conn: Pool): Promise<void>
+    withdrawal(userEntity: UserEntity, conn: Pool): Promise<void> 
 }
 
 export class UserRepository implements IUserRepository {
@@ -68,7 +73,7 @@ export class UserRepository implements IUserRepository {
         userDto.teamSpaceCount = userTSQueryResult.rows[0]? userTSQueryResult.rows[0].count : 0
     }
 
-    async putProfileImage(userEntity: UserEntity, conn: Pool = this.pool) {
+    async putProfileImage(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
         await conn.query(
             `UPDATE team_flow_management.user SET profile_image=$1 WHERE user_idx=$2`,
             [userEntity.profile, userEntity.userIdx]
