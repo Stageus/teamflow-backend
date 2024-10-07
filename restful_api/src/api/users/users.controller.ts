@@ -102,6 +102,8 @@ export class UserController implements IUserController {
             profile: req.body.signUpTokenDecoded.profile
         })
 
-        console.log(userDto)
+        await this.userService.createUser(userDto)
+
+        this.responseFilter.response200({})(req, res, next)
     }
 }
