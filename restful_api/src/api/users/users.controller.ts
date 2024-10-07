@@ -104,6 +104,10 @@ export class UserController implements IUserController {
 
         await this.userService.createUser(userDto)
 
-        this.responseFilter.response200({})(req, res, next)
+        this.responseFilter.response200()(req, res, next)
+    }
+
+    async getUserInfo(req: Request, res: Response, next: NextFunction) {
+
     }
 }

@@ -6,15 +6,15 @@ interface IResponseFilter{
 }
 
 export class ResponseFilter implements IResponseFilter {
-    response200 (message: object): (req: Request, res: Response, next: NextFunction) => void {
+    response200 (data?: object): (req: Request, res: Response, next: NextFunction) => void {
         return (req, res, next) => {
-            res.status(200).send(message)
+            res.status(200).send(data)
         }
     }
     
-    response203 (message: object): (req: Request, res: Response, next: NextFunction) => void {
+    response203 (data?: object): (req: Request, res: Response, next: NextFunction) => void {
         return (req, res, next) => {
-            res.status(203).send(message)
+            res.status(203).send(data)
         }
     }
 }

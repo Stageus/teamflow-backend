@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "../exception/customError";
 import jwt from 'jsonwebtoken'
-import { jwtSignUpSecretKey } from "../const/environment";
+import { jwtAccessSecretKey, jwtRefreshSecretKey, jwtSignUpSecretKey } from "../const/environment";
+import { generateAccessToken } from "../utils/generateToken";
 
 interface ICheckVerifyToken {
-    checkSignUpToken(): (req: Request, res: Response, next: NextFunction) => void
+    checkVerifySignUpToken(): (req: Request, res: Response, next: NextFunction) => void
+    checkVerifyAccessToken(): (req: Request, res: Response, next: NextFunction) => void
 }
 
 export class CheckVerifyToken implements ICheckVerifyToken  {
@@ -13,14 +15,14 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
     constructor () {
         this.customError = new CustomError()
     }
-    
-    checkSignUpToken(): (req: Request, res: Response, next: NextFunction) => void {
-        return (req: Request, res: Response, next: NextFunction) => {
+
+    checkVerifySignUpToken(): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
             try {
                 const signUpTokenHeader = req.headers.authorization
 
                 if (!signUpTokenHeader) {
-                    throw new CustomError().badRequestException('signUp token header is missing')
+                    throw this.customError.badRequestException('signUp token header is missing')
                 } else {
                     const signUpTokenDecoded = jwt.verify(signUpTokenHeader, jwtSignUpSecretKey)
 
@@ -28,6 +30,62 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
 
                     next()
                 }
+            } catch (err) {
+                next(err)
+            }
+        }
+    }
+
+    checkVerifyAccessToken(): (req: Request, res: Response, next: NextFunction) => void {
+        return (req, res, next) => {
+            try {
+                const accessTokenHeader = req.headers.authorization
+                const refreshToken = req.cookies.refreshToken
+
+                if (!accessTokenHeader) {
+                    throw this.customError.badRequestException('access token header is missing')
+                }
+
+                if (!refreshToken) {
+                    throw this.customError.unauthorizedException('need to login')
+                }
+
+                let accessTokenValid = false
+
+                jwt.verify(accessTokenHeader, jwtAccessSecretKey, (err, decoded) => {
+                    if (err) {
+                        accessTokenValid = false
+                    } else {
+                        accessTokenValid = true
+                    }
+                })
+
+                let accessTokenDecoded
+
+                if (!accessTokenValid) {
+                    const refreshTokenDecoded = jwt.verify(
+                        refreshToken,
+                        jwtRefreshSecretKey
+                    ) as jwt.JwtPayload
+
+                    const accessToken = generateAccessToken(
+                        refreshTokenDecoded.userIdx
+                    )
+
+                    accessTokenDecoded = jwt.verify(
+                        accessToken, 
+                        jwtAccessSecretKey
+                    ) as jwt.JwtPayload
+                } else {
+                    accessTokenDecoded = jwt.verify(
+                        accessTokenHeader,
+                        jwtAccessSecretKey
+                    ) as jwt.JwtPayload
+                }
+
+                req.body.accessTokenDecoded = accessTokenDecoded
+
+                next()
             } catch (err) {
                 next(err)
             }
