@@ -2,12 +2,14 @@ import { CustomError } from "../../../common/exception/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface ITeamSpaceDto {
+    ownerIdx?: number
     teamSpaceName?: string
 }
 
 export class TeamSpaceDto implements ITeamSpaceDto {
     private customError: CustomError
 
+    ownerIdx?: number
     teamSpaceName?: string
 
     constructor(data?: Partial<ITeamSpaceDto>) {
