@@ -32,4 +32,11 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [teamSpaceEntity.teamSpaceName, teamSpaceEntity.teamSpaceIdx]
         )
     }
+
+    async deleteTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `DELETE FROM team_flow_management.team_space WHERE ts_idx=$1`,
+            [teamSpaceEntity.teamSpaceIdx]
+        )
+    }
 }

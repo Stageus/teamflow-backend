@@ -38,7 +38,21 @@ export class TeamSpaceService {
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
-        
+
         await this.teamSpaceRepository.putTeamSpaceName(teamSpaceEntity, this.pool)
+    }
+
+    async deleteTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: teamSpaceDto.teamSpaceIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
     }
 }

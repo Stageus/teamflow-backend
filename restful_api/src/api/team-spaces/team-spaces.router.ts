@@ -29,4 +29,13 @@ teamSpaceRouter.put(
     wrapper(controller.teamSpaceController.putTeamSpace.bind(controller.teamSpaceController))
 )
 
+teamSpaceRouter.delete(
+    "/:teamSpaceIdx",
+    checkVerifyToken.checkVerifyAccessToken(),
+    teamSpaceDto.checkRegx([
+        ['teamSpaceIdx', regx.idxRegx]
+    ]),
+    wrapper(controller.teamSpaceController.deleteTeamSpace.bind(controller.teamSpaceController))
+)
+
 export default teamSpaceRouter
