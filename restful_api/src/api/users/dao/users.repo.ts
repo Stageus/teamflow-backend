@@ -1,5 +1,4 @@
 import { Pool } from "pg";
-import { UserDto } from "../dto/users.dto";
 import { UserEntity } from "../entity/users.entity";
 import { privateType } from "../../../common/const/ch_type";
 
@@ -8,10 +7,15 @@ interface IUserRepository {
     signUp(userEntity: UserEntity, conn: Pool): Promise<void>
     reSignUp(userEntity: UserEntity, conn: Pool): Promise<void>
     getUserProfile(userEntity: UserEntity, conn: Pool): Promise<void>
-    getUserTSCount(userDto: UserDto, userEntity: UserEntity, conn: Pool): Promise<void>
+    getUserTSCount(userEntity: UserEntity, conn: Pool): Promise<{}>
     putProfileImage(userEntity: UserEntity, conn: Pool): Promise<void>
     putNickname(userEntity: UserEntity, conn: Pool): Promise<void>
     withdrawal(userEntity: UserEntity, conn: Pool): Promise<void> 
+}
+
+interface ITSCount {
+    userOwnTsCount: number,
+    userTsCount: number
 }
 
 export class UserRepository implements IUserRepository {
@@ -54,7 +58,7 @@ export class UserRepository implements IUserRepository {
         userEntity.profile = userInfoQueryResult.rows[0].profile_image
     }
 
-    async getUserTSCount(userDto: UserDto, userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {
+    async getUserTSCount(userEntity: UserEntity, conn: Pool = this.pool): Promise<ITSCount> {
         await conn.query('BEGIN') 
        
         const userOwnTSQueryResult = await conn.query(
@@ -69,8 +73,12 @@ export class UserRepository implements IUserRepository {
 
         await conn.query('COMMIT')
 
-        userDto.teamSpaceOwnCount = userOwnTSQueryResult.rows[0]? userOwnTSQueryResult.rows[0].count : 0
-        userDto.teamSpaceCount = userTSQueryResult.rows[0]? userTSQueryResult.rows[0].count : 0
+        const tsCount = {
+            userOwnTsCount: userOwnTSQueryResult.rows[0]? parseInt(userOwnTSQueryResult.rows[0].count) : 0,
+            userTsCount: userTSQueryResult.rows[0]? parseInt(userTSQueryResult.rows[0].count) : 0
+        }
+
+        return tsCount
     }
 
     async putProfileImage(userEntity: UserEntity, conn: Pool = this.pool): Promise<void> {

@@ -1,24 +1,18 @@
-import { NextFunction, Request, Response } from "express"
 import { CustomError } from "../../../common/exception/customError"
+import { Request, Response, NextFunction } from 'express'
 
-interface IUserDto {
-    userIdx?: number
-    email?: string
-    profile?: string
-    nickname?: string
-    teamSpaceOwnCount?: number
-    teamSpaceCount?: number
+interface ITeamSpaceDto {
+    ownerIdx?: number
+    teamSpaceName?: string
+    teamSpaceIdx?: number
 }
 
-export class UserDto implements IUserDto {
-    userIdx?: number
-    email?: string
-    profile?: string
-    nickname?: string
-    teamSpaceOwnCount?: number
-    teamSpaceCount?: number
+export class TeamSpaceDto implements ITeamSpaceDto {
+    ownerIdx?: number
+    teamSpaceName?: string
+    teamSpaceIdx?: number
 
-    constructor(data?: Partial<IUserDto>) {
+    constructor(data?: Partial<ITeamSpaceDto>) {
         if (data) {
             Object.assign(this, data)
         }

@@ -52,11 +52,13 @@ export class UserService implements IUserService {
         })
 
         await this.userRepository.getUserProfile(userEntity, this.pool)
-        await this.userRepository.getUserTSCount(userDto, userEntity, this.pool)
+        const tsCountResult = await this.userRepository.getUserTSCount(userEntity, this.pool)
 
         userDto.nickname = userEntity.nickname
         userDto.email = userEntity.email
         userDto.profile = userEntity.profile
+        userDto.teamSpaceOwnCount = tsCountResult.userOwnTsCount,
+        userDto.teamSpaceCount = tsCountResult.userTsCount
     }
 
     async updateProfileImage(userDto: UserDto): Promise<void> {

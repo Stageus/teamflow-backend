@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import { CustomError } from "./src/common/exception/customError"
 import { serverPort } from "./src/common/const/environment"
 import userRouter from "./src/api/users/users.router"
+import teamSpaceRouter from "./src/api/team-spaces/team-spaces.router"
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use(cors({
 }))
 
 app.use("/users", userRouter)
+app.use("/team-spaces", teamSpaceRouter)
 
 const customError = new CustomError()
 
