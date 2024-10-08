@@ -3,7 +3,7 @@ import { TeamSpaceService } from './team-spaces.service';
 import { TeamSpaceDto } from './dto/team-spaes.dto';
 
 interface ITeamSpaceController {
-
+    addTeamSpace (req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class TeamSpaceController implements ITeamSpaceController {
