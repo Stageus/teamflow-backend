@@ -1,10 +1,11 @@
 import { Pool } from "pg";
-import { TeamSpaceRepository } from "./dao/team-sapces.repo";
+import { ITSMemberList, TeamSpaceRepository } from "./dao/team-sapces.repo";
 import { TeamSpaceDto } from "./dto/team-spaes.dto";
 import { TeamSpaceEntity } from "./entity/team-spaces.entity";
 import { UserDto } from "../users/dto/users.dto";
 import { CustomError } from "../../common/exception/customError";
-import { TSMemeberEntity } from "./entity/ts_member.entity";
+import { TSMemberEntity } from "./entity/ts_member.entity";
+import { TSMemberDto } from "./dto/ts_member.dto";
 
 interface ITeamSpaceService {
 
@@ -58,11 +59,11 @@ export class TeamSpaceService {
         await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
     }
 
-    async selectUserInfo(teamSpaceDto: TeamSpaceDto): Promise<void> {
-        const teamSpaceEntity = new TeamSpaceEntity({
-            teamSpaceIdx: teamSpaceDto.teamSpaceIdx
+    async selectUserList(tsMemberDto: TSMemberDto): Promise<ITSMemberList[]> {
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx
         })
 
-
+        return await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
     }
 }

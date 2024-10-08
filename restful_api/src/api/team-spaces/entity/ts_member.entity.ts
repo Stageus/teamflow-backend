@@ -2,15 +2,15 @@ interface ITSMemberEntity {
     tsMemberIdx?: number,
     userIdx?: number,
     tsRoleIdx?: number,
-    tsIdx?: number,
+    teamSpaceIdx?: number,
     joinedAt?: Date
 }
 
-export class TSMemeberEntity implements ITSMemberEntity{
+export class TSMemberEntity implements ITSMemberEntity{
     tsMemberIdx?: number
     userIdx?: number
     tsRoleIdx?: number
-    tsIdx?: number
+    teamSpaceIdx?: number
     joinedAt?: Date
 
     constructor(data?: Partial<ITSMemberEntity>) {
