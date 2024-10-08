@@ -63,4 +63,13 @@ export class TeamSpaceController implements ITeamSpaceController {
             res.status(203).send({ accessToken: req.body.accessToken })
         }
     }
+
+    async getUserList (req: Request, res: Response, next: NextFunction) {
+        const teamSpaceDto = new TeamSpaceDto({
+            teamSpaceIdx: parseInt(req.params.teamSpaceIdx),
+            searchWord: req.query.searchWord?.toString()
+        })
+
+        
+    }
 }

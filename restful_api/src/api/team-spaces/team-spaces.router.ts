@@ -38,4 +38,13 @@ teamSpaceRouter.delete(
     wrapper(controller.teamSpaceController.deleteTeamSpace.bind(controller.teamSpaceController))
 )
 
+teamSpaceRouter.get(
+    "/:teamSpaceIdx/user/list",
+    checkVerifyToken.checkVerifyAccessToken(),
+    teamSpaceDto.checkRegx([
+        ['teamSpaceIdx', regx.idxRegx]
+    ]),
+    wrapper(controller.teamSpaceController.getUserList.bind(controller.teamSpaceController))
+)
+
 export default teamSpaceRouter

@@ -4,6 +4,7 @@ import { TeamSpaceDto } from "./dto/team-spaes.dto";
 import { TeamSpaceEntity } from "./entity/team-spaces.entity";
 import { UserDto } from "../users/dto/users.dto";
 import { CustomError } from "../../common/exception/customError";
+import { TSMemeberEntity } from "./entity/ts_member.entity";
 
 interface ITeamSpaceService {
 
@@ -21,10 +22,11 @@ export class TeamSpaceService {
 
     async createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void> {
         const teamSpaceEntity = new TeamSpaceEntity({
+            ownerIdx: teamSpaceDto.ownerIdx,
             teamSpaceName: teamSpaceDto.teamSpaceName
         })
 
-        await this.teamSpaceRepository.addTeamSpace(teamSpaceEntity, this.pool)
+        await this.teamSpaceRepository.addTeamSpace(teamSpaceEntity, this.pool) 
     }
 
     async updateTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> {
@@ -54,5 +56,13 @@ export class TeamSpaceService {
         }
 
         await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
+    }
+
+    async selectUserInfo(teamSpaceDto: TeamSpaceDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: teamSpaceDto.teamSpaceIdx
+        })
+
+
     }
 }
