@@ -1,7 +1,8 @@
 import { Pool } from "pg";
-import { TeamSpaceEntity } from "../entity/team-spaces.entity";
-import { TSMemberEntity } from "../entity/ts_member.entity";
+import { TeamSpaceEntity } from "../entity/teamSpace.entity";
+import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager } from "../../../common/const/ts_role";
+import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
 
 interface ITeamSpaceRepository {
 
@@ -63,7 +64,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         )
     }
 
-    async getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<ITSMemberList[]> {
+    async getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSMemberDetailEntity[]> {
         const tsMemberQueryResult = await conn.query(
             `SELECT ts_member.user_idx, ts_member.ts_role_idx, "user".profile_image, "user".nickname, "user".email
             FROM team_flow_management.ts_member
@@ -73,12 +74,12 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [tsMemberEntity.teamSpaceIdx, generalManager, `%${searchWord}%`]
         );
 
-        return tsMemberQueryResult.rows.map((row) => ({
+        return tsMemberQueryResult.rows.map(row => new TSMemberDetailEntity({
             userIdx: row.user_idx,
             roleIdx: row.ts_role_idx,
             nickname: row.nickname,
             email: row.email,
             profile: row.profile_image
-        })) as ITSMemberList[]
+        }))
     }
 }

@@ -1,11 +1,12 @@
 import { Pool } from "pg";
 import { ITSMemberList, TeamSpaceRepository } from "./dao/team-sapces.repo";
-import { TeamSpaceDto } from "./dto/team-spaes.dto";
-import { TeamSpaceEntity } from "./entity/team-spaces.entity";
+import { TeamSpaceDto } from "./dto/teamSpace.dto";
+import { TeamSpaceEntity } from "./entity/teamSpace.entity";
 import { UserDto } from "../users/dto/users.dto";
 import { CustomError } from "../../common/exception/customError";
-import { TSMemberEntity } from "./entity/ts_member.entity";
-import { TSMemberDto } from "./dto/ts_member.dto";
+import { TSMemberEntity } from "./entity/tsMember.entity";
+import { TSMemberDto } from "./dto/tsMember.dto";
+import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
 
 interface ITeamSpaceService {
 
@@ -59,11 +60,19 @@ export class TeamSpaceService {
         await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
     }
 
-    async selectUserList(tsMemberDto: TSMemberDto): Promise<ITSMemberList[]> {
+    async selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             teamSpaceIdx: tsMemberDto.teamSpaceIdx
         })
 
-        return await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
+        const tsMemberList = await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
+
+        return tsMemberList.map(member => new TSMemberDetailDto({
+            userIdx: member.userIdx,
+            roleIdx: member.roleIdx,
+            nickname: member.nickname,
+            email: member.email,
+            profile: member.profile
+        }))
     }
 }

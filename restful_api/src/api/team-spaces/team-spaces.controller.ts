@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { TeamSpaceService } from './team-spaces.service';
-import { TeamSpaceDto } from './dto/team-spaes.dto';
+import { TeamSpaceDto } from './dto/teamSpace.dto';
 import { UserDto } from '../users/dto/users.dto';
-import { TSMemberDto } from './dto/ts_member.dto';
+import { TSMemberDto } from './dto/tsMember.dto';
 
 interface ITeamSpaceController {
     addTeamSpace (req: Request, res: Response, next: NextFunction): Promise<void>
