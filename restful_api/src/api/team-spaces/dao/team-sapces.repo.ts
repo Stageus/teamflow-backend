@@ -16,4 +16,20 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [teamSpaceEntity.ownerIdx, teamSpaceEntity.teamSpaceName]
         )
     }
+
+    async getTeamSpaceOwner(teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<void> {
+        const ownerQueryResult = await conn.query(
+            `SELECT owner_idx FROM team_flow_management.team_space WHERE ts_idx=$1`,
+            [teamSpaceEntity.teamSpaceIdx]
+        )
+
+        teamSpaceEntity.ownerIdx = ownerQueryResult.rows[0].owner_idx
+    }
+
+    async putTeamSpaceName(teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.team_space SET ts_name=$1 WHERE ts_idx=$2`,
+            [teamSpaceEntity.teamSpaceName, teamSpaceEntity.teamSpaceIdx]
+        )
+    }
 }

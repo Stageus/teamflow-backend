@@ -42,7 +42,7 @@ export class UserController implements IUserController {
         const authorizationCode = req.query.code as string
 
         if (req.query.error === "access_denied") {
-            this.customError.forbiddenException('사용자가 수집 정보를 비동의 함')
+            throw this.customError.forbiddenException('사용자가 수집 정보를 비동의 함')
         }
 
         const token_response = await axios.post<{ access_token : string }>(

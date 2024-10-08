@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 interface ITeamSpaceDto {
     ownerIdx?: number
     teamSpaceName?: string
+    teamSpaceIdx?: number
 }
 
 export class TeamSpaceDto implements ITeamSpaceDto {
@@ -11,6 +12,7 @@ export class TeamSpaceDto implements ITeamSpaceDto {
 
     ownerIdx?: number
     teamSpaceName?: string
+    teamSpaceIdx?: number
 
     constructor(data?: Partial<ITeamSpaceDto>) {
         if (data) {
