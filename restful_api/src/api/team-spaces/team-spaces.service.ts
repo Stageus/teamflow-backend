@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { ITSMemberList, TeamSpaceRepository } from "./dao/team-sapces.repo";
+import { TeamSpaceRepository } from "./dao/team-sapces.repo";
 import { TeamSpaceDto } from "./dto/teamSpace.dto";
 import { TeamSpaceEntity } from "./entity/teamSpace.entity";
 import { UserDto } from "../users/dto/users.dto";
@@ -68,11 +68,15 @@ export class TeamSpaceService {
         const tsMemberList = await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
 
         return tsMemberList.map(member => new TSMemberDetailDto({
-            userIdx: member.userIdx,
+            tsUserIdx: member.tsUserIdx,
             roleIdx: member.roleIdx,
             nickname: member.nickname,
             email: member.email,
             profile: member.profile
         }))
+    }
+
+    async updateUserAuth(teamSpaceDto: TeamSpaceDto, tsMemberDto: TSMemberDto): Promise<void> {
+        
     }
 }

@@ -4,11 +4,13 @@ import { controller } from '../index.controller'
 import { CheckVerifyToken } from '../../common/pipes/checkVerifyToken'
 import { TeamSpaceDto } from './dto/teamSpace.dto'
 import { regx } from '../../common/const/regx'
+import { TSMemberDto } from './dto/tsMember.dto'
 
 const teamSpaceRouter = Router()
 
 const checkVerifyToken = new CheckVerifyToken()
 const teamSpaceDto = new TeamSpaceDto()
+const tsMemberDto = new TSMemberDto()
 
 teamSpaceRouter.post(
     "/",
@@ -45,6 +47,17 @@ teamSpaceRouter.get(
         ['teamSpaceIdx', regx.idxRegx]
     ]),
     wrapper(controller.teamSpaceController.getUserList.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.put(
+    "/:teamSpaceIdx/user/auth",
+    checkVerifyToken.checkVerifyAccessToken(),
+    tsMemberDto.checkRegx([
+        ['teamSpaceIdx', regx.idxRegx],
+        ['userIdx', regx.idxRegx],
+        ['roleIdx', regx.idxRegx]
+    ]),
+    wrapper(controller.teamSpaceController.putUserAuth.bind(controller.teamSpaceController))
 )
 
 export default teamSpaceRouter

@@ -65,7 +65,7 @@ export class TeamSpaceController implements ITeamSpaceController {
         }
     }
 
-    async getUserList (req: Request, res: Response, next: NextFunction) {
+    async getUserList (req: Request, res: Response, next: NextFunction): Promise<void> {
         const tsMemberDto = new TSMemberDto({
             teamSpaceIdx: parseInt(req.params.teamSpaceIdx),
             searchWord: req.query.searchWord?.toString()
@@ -79,5 +79,15 @@ export class TeamSpaceController implements ITeamSpaceController {
             const response = [[tsMemberList], [{accessToken: req.body.accessToken}]]
             res.status(203).send(response)
         }
+    }
+
+    async putUserAuth (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const tsMemberDto = new TSMemberDto({
+            teamSpaceIdx: parseInt(req.params.teamSpaceIdx),
+            tsUserIdx: req.body.userIdx,
+            roleIdx: req.body.roleIdx
+        })
+
+        
     }
 }
