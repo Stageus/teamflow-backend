@@ -21,14 +21,14 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         )
 
         const tsMemberEntity = new TSMemberEntity({
-            userIdx: teamSpaceEntity.ownerIdx,
-            tsRoleIdx: 1,
+            tsUserIdx: teamSpaceEntity.ownerIdx,
+            roleIdx: 1,
             teamSpaceIdx: teamSpaceIdxQueryResult.rows[0].ts_idx
         })
 
         await conn.query(
             `INSERT INTO team_flow_management.ts_member (user_idx, ts_role_idx, ts_idx) VALUES ($1, $2, $3)`,
-            [tsMemberEntity.userIdx, tsMemberEntity.tsRoleIdx, tsMemberEntity.teamSpaceIdx]
+            [tsMemberEntity.tsUserIdx, tsMemberEntity.roleIdx, tsMemberEntity.teamSpaceIdx]
         )
         await conn.query('COMMIT')
     }

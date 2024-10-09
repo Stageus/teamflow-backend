@@ -1,15 +1,13 @@
 interface ITSMemberEntity {
-    tsMemberIdx?: number,
-    userIdx?: number,
-    tsRoleIdx?: number,
+    tsUserIdx?: number,
+    roleIdx?: number,
     teamSpaceIdx?: number,
     joinedAt?: Date
 }
 
 export class TSMemberEntity implements ITSMemberEntity{
-    tsMemberIdx?: number
-    userIdx?: number
-    tsRoleIdx?: number
+    tsUserIdx?: number
+    roleIdx?: number
     teamSpaceIdx?: number
     joinedAt?: Date
 
