@@ -88,6 +88,12 @@ export class TeamSpaceController implements ITeamSpaceController {
             roleIdx: req.body.roleIdx
         })
 
-        
+        await this.teamSpaceService.updateUserAuth(tsMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send()
+        }
     }
 }
