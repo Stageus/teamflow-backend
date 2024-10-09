@@ -2,17 +2,15 @@ import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
 
 interface ITSMemberDto {
-    tsMemberIdx?: number,
-    userIdx?: number,
-    tsRoleIdx?: number,
+    tsUserIdx?: number,
+    roleIdx?: number,
     teamSpaceIdx?: number,
     searchWord?: string
 }
 
 export class TSMemberDto implements ITSMemberDto {
-    tsMemberIdx?: number
-    userIdx?: number
-    tsRoleIdx?: number
+    tsUserIdx?: number
+    roleIdx?: number
     teamSpaceIdx?: number
     searchWord?: string
 

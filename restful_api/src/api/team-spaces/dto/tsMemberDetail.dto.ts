@@ -1,5 +1,5 @@
 interface ITSMemberDetailDto {
-    userIdx?: number
+    tsUserIdx?: number
     roleIdx?: number
     nickname?: string
     email?: string
@@ -7,19 +7,17 @@ interface ITSMemberDetailDto {
 }
 
 export class TSMemberDetailDto implements ITSMemberDetailDto {
-    userIdx: number | undefined
-    roleIdx: number | undefined
-    nickname: string | undefined
-    email: string | undefined
-    profile: string | undefined
+    tsUserIdx?: number
+    roleIdx?: number
+    nickname?: string
+    email?: string
+    profile?: string
 
     constructor(
-       data: ITSMemberDetailDto
-    ) {
-        this.userIdx = data.userIdx,
-        this.roleIdx = data.roleIdx,
-        this.nickname = data.nickname,
-        this.email = data.email,
-        this.profile = data.profile
+       data?: Partial<ITSMemberDetailDto>
+    ) { 
+        if (data) {
+            Object.assign(this, data)
+        }
     }
 }
