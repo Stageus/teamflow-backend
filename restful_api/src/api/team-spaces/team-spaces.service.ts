@@ -76,7 +76,7 @@ export class TeamSpaceService {
         }))
     }
 
-    async updateUserAuth(teamSpaceDto: TeamSpaceDto, tsMemberDto: TSMemberDto): Promise<void> {
+    async updateUserAuth(tsMemberDto: TSMemberDto): Promise<void> {
         
     }
 }
