@@ -3,7 +3,7 @@ import { TeamSpaceEntity } from "../entity/teamSpace.entity";
 import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager, member, teamManager } from "../../../common/const/ts_role";
 import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
-import { privateType } from "../../../common/const/ch_type";
+import { notificationType, privateType, publicType } from "../../../common/const/ch_type";
 import { TSParListDetailEntity } from "../entity/tsParListDetail.entity";
 
 interface ITeamSpaceRepository {
@@ -12,7 +12,7 @@ interface ITeamSpaceRepository {
     putTeamSpaceName(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     deleteTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberDetailEntity[]> 
-    getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
+    getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<number>
     putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void> 
     putMemberAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
     deleteManager(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
@@ -43,6 +43,14 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         await conn.query(
             `INSERT INTO team_flow_management.ts_member (user_idx, ts_role_idx, ts_idx) VALUES ($1, $2, $3)`,
             [tsMemberEntity.tsUserIdx, tsMemberEntity.roleIdx, tsMemberEntity.teamSpaceIdx]
+        )
+        await conn.query(
+            `INSERT INTO team_flow_management.channel (ts_idx, ch_type_idx, owner_idx, ch_name) VALUES ($1, $2, $3, $4)`,
+            [tsMemberEntity.teamSpaceIdx, notificationType, tsMemberEntity.tsUserIdx, "공지채널" ]
+        )
+        await conn.query(
+            `INSERT INTO team_flow_management.channel (ts_idx, ch_type_idx, owner_idx, ch_name) VALUES ($1, $2, $3, $4)`,
+            [tsMemberEntity.teamSpaceIdx, publicType, tsMemberEntity.tsUserIdx, "공개채널" ]
         )
         await conn.query('COMMIT')
     }
@@ -89,7 +97,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         }))
     }
 
-    async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
+    async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<number> {
         const tsMemberQueryResult = await conn.query(
             `SELECT ts_role_idx FROM team_flow_management.ts_member WHERE ts_idx = $1 AND user_idx = $2`,
             [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
@@ -98,6 +106,8 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         if (tsMemberQueryResult.rows[0]) {
             tsMemberEntity.roleIdx = tsMemberQueryResult.rows[0].ts_role_idx
         }
+
+        return tsMemberEntity.roleIdx!
     }
 
     async putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
@@ -204,8 +214,10 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             FROM team_flow_management.ts_member 
             JOIN team_flow_management."team_space" ON ts_member.ts_idx = "team_space".ts_idx
             JOIN team_flow_management."user" ON "team_space".owner_idx = "user".user_idx
-            WHERE ts_member.user_idx = $1 AND ts_role_idx != $2`,
-            [tsMemberEntity.tsUserIdx, generalManager]
+            WHERE ts_member.user_idx = $1 AND ts_role_idx != $2
+            ORDER BY ts_member.joined_at DESC
+            OFFSET $2 FETCH NEXT 6 ROWS ONLY`,
+            [tsMemberEntity.tsUserIdx, generalManager, page * 6]
         )
 
         return tsParListQueryResult.rows.map(row => new TSParListDetailEntity({
