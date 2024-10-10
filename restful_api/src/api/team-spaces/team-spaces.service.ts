@@ -7,7 +7,6 @@ import { CustomError } from "../../common/exception/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
 import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
-import { UserRepository } from "../users/dao/users.repo";
 import { member, teamManager } from "../../common/const/ts_role";
 
 interface ITeamSpaceService {
@@ -134,5 +133,22 @@ export class TeamSpaceService {
         if (tsMemberEntity.roleIdx === member) {
             return await this.teamSpaceRepository.deleteMember(tsMemberEntity, this.pool)
         }
+    }
+
+    async selectTSList(tsMemberDto: TSMemberDto): Promise<TeamSpaceDto[]> {
+        const tsMemberEntity = new TSMemberEntity({
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        const tsList = await this.teamSpaceRepository.getTSList(tsMemberEntity, this.pool)
+
+        if (tsList.length === 0) {
+            throw this.customError.notFoundException('소속된 teamspace가 없음')
+        }
+
+        return tsList.map(ts => new TeamSpaceDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName
+        }))
     }
 }

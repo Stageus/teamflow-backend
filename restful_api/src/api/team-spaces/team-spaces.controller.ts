@@ -118,4 +118,18 @@ export class TeamSpaceController implements ITeamSpaceController {
             res.status(203).send({ accessToken: req.body.accessToken })
         }
     }
+
+    async getTSList (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const tsMemberDto = new TSMemberDto({
+            tsUserIdx: req.body.userIdx
+        })
+
+        const tsList = await this.teamSpaceService.selectTSList(tsMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send([tsList])
+        } else {
+            res.status(203).send([[tsList], [{ accessToken : req.body.accessToken }]])
+        }
+    }
 }

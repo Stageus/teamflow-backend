@@ -151,4 +151,19 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         )
         await conn.query('COMMIT')
     }
+
+    async getTSList(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TeamSpaceEntity[]> {
+        const tsListQueryResult = await conn.query(
+            `SELECT ts_member.ts_idx, "team_space".ts_name 
+            FROM team_flow_management.ts_member
+            JOIN team_flow_management.team_space ON ts_member.ts_idx="team_space".ts_idx
+            WHERE ts_member.user_idx=$1 ORDER BY ts_member.joined_at DESC`,
+            [tsMemberEntity.tsUserIdx]
+        )
+        
+        return tsListQueryResult.rows.map(row => new TeamSpaceEntity({
+            teamSpaceIdx: row.ts_idx,
+            teamSpaceName: row.ts_name
+        }))
+    }
 }

@@ -69,4 +69,9 @@ teamSpaceRouter.delete(
     wrapper(controller.teamSpaceController.deleteTSUser.bind(controller.teamSpaceController))
 )
 
+teamSpaceRouter.get(
+    "/list",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSList.bind(controller.teamSpaceController))
+)
 export default teamSpaceRouter
