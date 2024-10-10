@@ -51,4 +51,13 @@ channelRouter.delete(
     wrapper(controller.channelController.deleteChannelUser.bind(controller.channelController))
 )
 
+channelRouter.get(
+    "/:channelIdx/user/list",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelMemberDto.checkRegx([
+        ["channelIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.getChannelUserList.bind(controller.channelController))
+)
+
 export default channelRouter

@@ -88,4 +88,19 @@ export class ChannelController implements IChannelController {
             res.status(203).send({ accessToken : req.body.accessToken })
         }
     }
+
+    async getChannelUserList(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const channelMemberDto = new ChannelMemberDto({
+            channelIdx: parseInt(req.params.channelIdx),
+            searchWord: req.query.searchWord?.toString()
+        })
+
+        const userList = await this.channelService.selectChannelUserList(channelMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send([userList])
+        } else {
+            res.status(203).send([[userList], [{ accessToken: req.body.accessToken }]])
+        }
+    }
 }

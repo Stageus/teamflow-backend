@@ -1,16 +1,17 @@
-import { Pool } from "pg";
-import { ChannelRepository } from "../dao/channels.repo";
-import { ChannelDto } from "../dto/channel.dto";
-import { TeamSpaceRepository } from "../../team-spaces/dao/team-sapces.repo";
-import { TSMemberDto } from "../../team-spaces/dto/tsMember.dto";
-import { teamManager } from "../../../common/const/ts_role";
-import { CustomError } from "../../../common/exception/customError";
-import { ChannelEntity } from "./channel.entity";
-import { privateType } from "../../../common/const/ch_type";
-import { TSMemberEntity } from "../../team-spaces/entity/tsMember.entity";
-import { UserDto } from "../../users/dto/users.dto";
-import { ChannelMemberEntity } from "./channelMember.entity";
-import { ChannelMemberDto } from "../dto/channelMember.dto";
+import { Pool } from "pg"
+import { TeamSpaceRepository } from "../team-spaces/dao/team-sapces.repo"
+import { ChannelRepository } from "./dao/channels.repo"
+import { CustomError } from "../../common/exception/customError"
+import { UserDto } from "../users/dto/users.dto"
+import { ChannelDto } from "./dto/channel.dto"
+import { TSMemberEntity } from "../team-spaces/entity/tsMember.entity"
+import { ChannelEntity } from "./entity/channel.entity"
+import { privateType } from "../../common/const/ch_type"
+import { teamManager } from "../../common/const/ts_role"
+import { ChannelMemberDto } from "./dto/channelMember.dto"
+import { ChannelMemberEntity } from "./entity/channelMember.entity"
+import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
+
 
 interface IChannelService {
     createChannel (channelDto: ChannelDto): Promise<void>
@@ -101,5 +102,25 @@ export class ChannelService implements IChannelService {
         }
 
         await this.channelRepository.deleteChannelUser(channelMemberEntity, this.pool)
+    }
+
+    async selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: channelMemberDto.channelIdx
+        })
+
+       const userList = await this.channelRepository.getChannelUserList(channelMemberDto.searchWord!, channelMemberEntity, this.pool)
+
+       if (userList.length === 0) {
+            throw this.customError.notFoundException('검색된 user가 없음')
+       }
+
+       return userList.map(user => new ChMemberDetailDto({
+            channelUserIdx: user.channelUserIdx,
+            roleIdx: user.roleIdx,
+            nickname: user.nickname,
+            email: user.email,
+            profile: user.profile
+       }))
     }
 }

@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
 import { ChannelDto } from "../dto/channel.dto";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
+import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -64,5 +65,25 @@ export class ChannelRepository implements IChannelRepository {
             [channelMemberEntity.channelIdx, channelMemberEntity.channelUserIdx]
         )
         await conn.query('COMMIT')
+    }
+
+    async getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<ChMemberDetailEntity[]> {
+        const channelUserQueryResult = await conn.query(
+            `SELECT private_ch_member.user_idx, "ts_member".ts_role_idx, "user".nickname, "user".email, "user".profile_image
+            FROM team_flow_management.private_ch_member
+            JOIN team_flow_management.ts_member ON "ts_member".user_idx = private_ch_member.user_idx
+            JOIN team_flow_management.user ON "user".user_idx = private_ch_member.user_idx
+            WHERE private_ch_member.user_idx NOT IN (SELECT owner_idx FROM team_flow_management.channel WHERE ch_idx=$1) AND "user".nickname LIKE $2
+            ORDER BY "user".nickname ASC `,
+            [channelMemberEntity.channelIdx, `%${searchWord}%`]
+        )
+
+        return channelUserQueryResult.rows.map(row => new ChMemberDetailEntity({
+            channelUserIdx: row.user_idx,
+            roleIdx: row.ts_role_idx,
+            nickname: row.nickname,
+            email: row.email,
+            profile: row.profile_image
+        }))
     }
 }
