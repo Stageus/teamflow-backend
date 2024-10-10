@@ -3,6 +3,7 @@ import { TeamSpaceEntity } from "../entity/teamSpace.entity";
 import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager, member, teamManager } from "../../../common/const/ts_role";
 import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
+import { privateType } from "../../../common/const/ch_type";
 
 interface ITeamSpaceRepository {
 
@@ -77,7 +78,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
 
     async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
         const tsMemberQueryResult = await conn.query(
-            `SELECT ts_member.ts_role_idx FROM team_flow_management.ts_member WHERE ts_idx = $1 AND user_idx = $2`,
+            `SELECT ts_role_idx FROM team_flow_management.ts_member WHERE ts_idx = $1 AND user_idx = $2`,
             [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
         )
 
@@ -104,5 +105,50 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             `UPDATE team_flow_management.ts_member SET ts_role_idx=$1 WHERE ts_idx = $2 AND user_idx = $3`,
             [teamManager, tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
         )
+    }
+
+    async deleteManager(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query('BEGIN')
+        await conn.query(
+            `DELETE FROM team_flow_management.ts_member WHERE ts_idx=$1 AND user_idx=$2`,
+            [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query(
+            `UPDATE team_flow_management.channel WHERE ts_idx=$1 AND owner_idx=$2`,
+            [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query(
+            `DELETE FROM team_flow_management.private_ch_member 
+            WHERE ch_idx IN (SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx=$2)
+            AND user_idx=$3`,
+            [tsMemberEntity.teamSpaceIdx, privateType, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query(
+            `UPDATE team_flow_management.thread SET user_idx=null
+            WHERE thread.ch_idx IN (SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx=$2)
+            AND user_idx = $3`
+        )
+        await conn.query('COMMIT')
+    }
+
+    async deleteMember(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query('BEGIN')
+        await conn.query(
+            `DELETE FROM team_flow_management.ts_member WHERE ts_idx=$1 AND user_idx=$2`,
+            [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query(
+            `DELETE FROM team_flow_management.private_ch_member 
+            WHERE ch_idx IN (SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx=$2)
+            AND user_idx=$3`,
+            [tsMemberEntity.teamSpaceIdx, privateType, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query(
+            `UPDATE team_flow_management.thread SET user_idx=null
+            WHERE thread.ch_idx IN (SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx=$2)
+            AND user_idx = $3`,
+            [tsMemberEntity.teamSpaceIdx, privateType, tsMemberEntity.tsUserIdx]
+        )
+        await conn.query('COMMIT')
     }
 }

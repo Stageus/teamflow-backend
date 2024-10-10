@@ -108,4 +108,31 @@ export class TeamSpaceService {
             return await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
         }
     }
+
+    async deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity ({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx
+        })
+
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx,
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.teamSpaceRepository.deleteManager(tsMemberEntity, this.pool)
+        }
+
+        if (tsMemberEntity.roleIdx === member) {
+            return await this.teamSpaceRepository.deleteMember(tsMemberEntity, this.pool)
+        }
+    }
 }

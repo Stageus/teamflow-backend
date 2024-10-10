@@ -99,4 +99,23 @@ export class TeamSpaceController implements ITeamSpaceController {
             res.status(203).send({ accessToken : req.body.accessToken })
         }
     }
+
+    async deleteTSUser (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        const tsMemberDto = new TSMemberDto({
+            teamSpaceIdx: parseInt(req.params.teamSpaceIdx),
+            tsUserIdx: req.body.tsUserIdx
+        })
+
+        await this.teamSpaceService.deleteTSUser(userDto, tsMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send({ accessToken: req.body.accessToken })
+        }
+    }
 }
