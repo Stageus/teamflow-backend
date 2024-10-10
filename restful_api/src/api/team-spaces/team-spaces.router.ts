@@ -54,8 +54,7 @@ teamSpaceRouter.put(
     checkVerifyToken.checkVerifyAccessToken(),
     tsMemberDto.checkRegx([
         ['teamSpaceIdx', regx.idxRegx],
-        ['userIdx', regx.idxRegx],
-        ['roleIdx', regx.idxRegx]
+        ['tsUserIdx', regx.idxRegx]
     ]),
     wrapper(controller.teamSpaceController.putUserAuth.bind(controller.teamSpaceController))
 )

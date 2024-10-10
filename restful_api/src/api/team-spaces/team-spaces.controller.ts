@@ -82,18 +82,21 @@ export class TeamSpaceController implements ITeamSpaceController {
     }
 
     async putUserAuth (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto ({
+            userIdx: req.body.userIdx
+        })
+        
         const tsMemberDto = new TSMemberDto({
             teamSpaceIdx: parseInt(req.params.teamSpaceIdx),
-            tsUserIdx: req.body.userIdx,
-            roleIdx: req.body.roleIdx
+            tsUserIdx: req.body.tsUserIdx
         })
 
-        await this.teamSpaceService.updateUserAuth(tsMemberDto)
+        await this.teamSpaceService.updateUserAuth(userDto, tsMemberDto)
 
         if (!req.body.accessToken) {
             res.status(200).send()
         } else {
-            res.status(203).send()
+            res.status(203).send({ accessToken : req.body.accessToken })
         }
     }
 }

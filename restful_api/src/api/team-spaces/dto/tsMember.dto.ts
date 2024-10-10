@@ -22,7 +22,7 @@ export class TSMemberDto implements ITSMemberDto {
 
     checkRegx(params: [string, RegExp][]): (req: Request, res: Response, next: NextFunction) => void  {
         const customError = new CustomError()
-        
+
         return (req, res, next) => {
             try {
                 params.forEach(([paramName, paramRegx]) => {
