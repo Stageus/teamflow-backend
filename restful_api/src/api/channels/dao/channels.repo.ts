@@ -4,6 +4,8 @@ import { ChannelDto } from "../dto/channel.dto";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
+    getChannelOwner (channelEntity: ChannelEntity, conn: Pool): Promise<void>
+    putChannelName (channelEntity: ChannelEntity, conn: Pool): Promise<void> 
 }
 
 export class ChannelRepository implements IChannelRepository {
@@ -40,6 +42,13 @@ export class ChannelRepository implements IChannelRepository {
         await conn.query(
             `UPDATE team_flow_management.channel SET ch_name=$1 WHERE ch_idx=$2`,
             [channelEntity.channelName, channelEntity.channelIdx]
+        )
+    }
+
+    async deleteChannel (channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `DELETE FROM team_flow_management.channel WHERE owner_idx=$1`,
+            [channelEntity.ownerIdx]
         )
     }
 }

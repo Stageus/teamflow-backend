@@ -12,6 +12,8 @@ import { UserDto } from "../../users/dto/users.dto";
 
 interface IChannelService {
     createChannel (channelDto: ChannelDto): Promise<void>
+    updateChannelName (userDto: UserDto, channelDto: ChannelDto): Promise<void>
+
 }
 
 export class ChannelService implements IChannelService {
@@ -60,5 +62,19 @@ export class ChannelService implements IChannelService {
         }
 
         await this.channelRepository.putChannelName(channelEntity, this.pool)
+    }
+
+    async deleteChannel (userDto: UserDto, channelDto: ChannelDto): Promise<void> {
+        const channelEntity = new ChannelEntity({
+            channelIdx: channelDto.channelIdx
+        })
+
+        await this.channelRepository.getChannelOwner(channelEntity, this.pool)
+
+        if (userDto.userIdx !== channelEntity.ownerIdx) {
+            throw this.customError.forbiddenException('해당 channel 소유자만 가능')
+        }
+
+        await this.channelRepository.deleteChannel(channelEntity, this.pool)
     }
 }

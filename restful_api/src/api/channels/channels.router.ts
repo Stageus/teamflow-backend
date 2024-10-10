@@ -30,4 +30,13 @@ channelRouter.put(
     wrapper(controller.channelController.putChannelName.bind(controller.channelController))
 )
 
+channelRouter.delete(
+    "/:channelIdx",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelDto.checkRegx([
+        ["channelIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.deleteChannel.bind(controller.channelController))
+)
+
 export default channelRouter

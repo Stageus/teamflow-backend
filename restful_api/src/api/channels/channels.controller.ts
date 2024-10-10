@@ -5,6 +5,7 @@ import { UserDto } from "../users/dto/users.dto";
 
 interface IChannelController {
     addChannel (req: Request, res: Response, next: NextFunction): Promise<void> 
+    putChannelName (req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class ChannelController implements IChannelController {
@@ -39,6 +40,24 @@ export class ChannelController implements IChannelController {
         })
 
         await this.channelService.updateChannelName(userDto, channelDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send({ accessToken : req.body.accessToken })
+        }
+    }
+
+    async deleteChannel (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        const channelDto = new ChannelDto({
+            channelIdx: parseInt(req.params.channelIdx)
+        })
+
+        await this.channelService.deleteChannel(userDto, channelDto)
 
         if (!req.body.accessToken) {
             res.status(200).send()
