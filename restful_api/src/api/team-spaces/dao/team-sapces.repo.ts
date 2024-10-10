@@ -4,6 +4,8 @@ import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager, member, teamManager } from "../../../common/const/ts_role";
 import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
 import { privateType } from "../../../common/const/ch_type";
+import { TeamSpaceDto } from "../dto/teamSpace.dto";
+import { TSParListDetailEntity } from "../entity/tsParListDetail.entity";
 
 interface ITeamSpaceRepository {
 
@@ -152,18 +154,55 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         await conn.query('COMMIT')
     }
 
-    async getTSList(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TeamSpaceEntity[]> {
+    async getTSList(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSMemberEntity[]> {
         const tsListQueryResult = await conn.query(
-            `SELECT ts_member.ts_idx, "team_space".ts_name 
+            `SELECT ts_member.ts_idx, ts_member.ts_role_idx, "team_space".ts_name 
             FROM team_flow_management.ts_member
             JOIN team_flow_management.team_space ON ts_member.ts_idx="team_space".ts_idx
             WHERE ts_member.user_idx=$1 ORDER BY ts_member.joined_at DESC`,
             [tsMemberEntity.tsUserIdx]
         )
         
-        return tsListQueryResult.rows.map(row => new TeamSpaceEntity({
+        return tsListQueryResult.rows.map(row => new TSMemberEntity({
             teamSpaceIdx: row.ts_idx,
-            teamSpaceName: row.ts_name
+            teamSpaceName: row.ts_name,
+            roleIdx: row.ts_role_idx
+        }))
+    }
+
+    async getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<TSMemberEntity[]> {
+        const tsOwnListQueryResult = await conn.query(
+            `SELECT ts_idx, ts_name FROM team_flow_management.team_space 
+            WHERE owner_idx=$1
+            ORDER BY created_at DESC
+            OFFSET $2 FETCH NEXT 6 ROWS ONLY`,
+            [teamSpaceEntity.ownerIdx, page * 6]
+        )
+        
+
+        return tsOwnListQueryResult.rows.map(row => new TSMemberEntity({
+            teamSpaceIdx: row.ts_idx,
+            teamSpaceName: row.ts_name,
+            roleIdx: generalManager
+        }))
+    }
+
+    async getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSParListDetailEntity[]> {
+        const tsParListQueryResult = await conn.query(
+            `SELECT ts_member.ts_idx, ts_member.ts_role_idx, "team_space".ts_name, "user".nickname, "user".email
+            FROM team_flow_management.ts_member 
+            JOIN team_flow_management."team_space" ON ts_member.ts_idx = "team_space".ts_idx
+            JOIN team_flow_management."user" ON "team_space".owner_idx = "user".user_idx
+            WHERE ts_member.user_idx = $1 AND ts_role_idx != $2`,
+            [tsMemberEntity.tsUserIdx, generalManager]
+        )
+
+        return tsParListQueryResult.rows.map(row => new TSParListDetailEntity({
+            teamSpaceIdx: row.ts_idx,
+            teamSpaceName: row.ts_name,
+            roleIdx: row.ts_role_idx,
+            generalManagerNickname: row.nickname,
+            generalManagerEmail: row.email
         }))
     }
 }

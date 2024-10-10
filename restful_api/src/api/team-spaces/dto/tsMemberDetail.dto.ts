@@ -4,6 +4,7 @@ interface ITSMemberDetailDto {
     nickname?: string
     email?: string
     profile?: string
+    teamSpaceName?: string
 }
 
 export class TSMemberDetailDto implements ITSMemberDetailDto {
@@ -12,6 +13,7 @@ export class TSMemberDetailDto implements ITSMemberDetailDto {
     nickname?: string
     email?: string
     profile?: string
+    teamSpaceName?: string
 
     constructor(
        data?: Partial<ITSMemberDetailDto>

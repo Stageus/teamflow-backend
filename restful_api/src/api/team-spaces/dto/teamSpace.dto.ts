@@ -5,12 +5,14 @@ interface ITeamSpaceDto {
     ownerIdx?: number
     teamSpaceName?: string
     teamSpaceIdx?: number
+    page?: number
 }
 
 export class TeamSpaceDto implements ITeamSpaceDto {
     ownerIdx?: number
     teamSpaceName?: string
     teamSpaceIdx?: number
+    page?: number
 
     constructor(data?: Partial<ITeamSpaceDto>) {
         if (data) {

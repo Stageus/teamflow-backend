@@ -8,6 +8,7 @@ import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
 import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
 import { member, teamManager } from "../../common/const/ts_role";
+import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
 
 interface ITeamSpaceService {
 
@@ -135,7 +136,7 @@ export class TeamSpaceService {
         }
     }
 
-    async selectTSList(tsMemberDto: TSMemberDto): Promise<TeamSpaceDto[]> {
+    async selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             tsUserIdx: tsMemberDto.tsUserIdx
         })
@@ -146,9 +147,48 @@ export class TeamSpaceService {
             throw this.customError.notFoundException('소속된 teamspace가 없음')
         }
 
-        return tsList.map(ts => new TeamSpaceDto({
+        return tsList.map(ts => new TSMemberDto({
             teamSpaceIdx: ts.teamSpaceIdx,
-            teamSpaceName: ts.teamSpaceName
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx
+        }))
+    }
+
+    async selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> {{
+        const teamSpaceEntity = new TeamSpaceEntity({
+            ownerIdx: teamSpaceDto.ownerIdx,
+        })
+
+        const tsOwnList = await this.teamSpaceRepository.getTSOwnList(teamSpaceDto.page!, teamSpaceEntity, this.pool)
+        
+        if (tsOwnList.length === 0) {
+            throw this.customError.notFoundException('생성한 teamspace가 없음')
+        }
+
+        return tsOwnList.map(ts => new TSMemberDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx
+        }))
+    }}
+
+    async selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> {
+        const tsMemberEntity = new TSMemberEntity({
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        const tsParList = await this.teamSpaceRepository.getTSParList(tsMemberDto.page!, tsMemberEntity, this.pool)
+
+        if (tsParList.length === 0) {
+            throw this.customError.notFoundException('참여 중인 teamspace가 없음')
+        }
+
+        return tsParList.map(ts => new TSParListDetailDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx,
+            generalManagerNickname: ts.generalManagerNickname,
+            generalManagerEmail: ts.generalManagerEmail
         }))
     }
 }

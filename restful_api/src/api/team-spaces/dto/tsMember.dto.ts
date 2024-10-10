@@ -5,7 +5,9 @@ interface ITSMemberDto {
     tsUserIdx?: number,
     roleIdx?: number,
     teamSpaceIdx?: number,
-    searchWord?: string
+    searchWord?: string,
+    page?: number,
+    teamSpaceName?: string
 }
 
 export class TSMemberDto implements ITSMemberDto {
@@ -13,6 +15,8 @@ export class TSMemberDto implements ITSMemberDto {
     roleIdx?: number
     teamSpaceIdx?: number
     searchWord?: string
+    page?: number
+    teamSpaceName?: string
 
     constructor(data?: Partial<ITSMemberDto>) {
         if (data) {

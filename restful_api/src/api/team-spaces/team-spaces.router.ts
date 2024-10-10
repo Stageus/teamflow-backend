@@ -74,4 +74,17 @@ teamSpaceRouter.get(
     checkVerifyToken.checkVerifyAccessToken(),
     wrapper(controller.teamSpaceController.getTSList.bind(controller.teamSpaceController))
 )
+
+teamSpaceRouter.get(
+    "/list/own",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSOwnList.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.get(
+    "/list/participation",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSParList.bind(controller.teamSpaceController))
+)
+
 export default teamSpaceRouter

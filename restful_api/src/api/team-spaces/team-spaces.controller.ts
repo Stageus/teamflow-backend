@@ -132,4 +132,34 @@ export class TeamSpaceController implements ITeamSpaceController {
             res.status(203).send([[tsList], [{ accessToken : req.body.accessToken }]])
         }
     }
+
+    async getTSOwnList (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const teamSpaceDto = new TeamSpaceDto({
+            ownerIdx: req.body.userIdx,
+            page: Number(req.query.page)
+        })
+
+        const tsOwnList = await this.teamSpaceService.selectTSOwnList(teamSpaceDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send([tsOwnList])
+        } else {
+            res.status(203).send([[tsOwnList], [{ accessToken: req.body.accessToken}]])
+        }
+    }
+
+    async getTSParList (req: Request, res: Response, next: NextFunction): Promise<void> {
+        const tsMemberDto = new TSMemberDto({
+            tsUserIdx: req.body.userIdx,
+            page: Number(req.query.page)
+        })
+
+        const tsParList = await this.teamSpaceService.selectTSParList(tsMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send([tsParList])
+        } else {
+            res.status(203).send([[tsParList], [{ accessToken : req.body.accessToken }]])
+        }
+    }
 }
