@@ -11,7 +11,15 @@ import { member, teamManager } from "../../common/const/ts_role";
 import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
 
 interface ITeamSpaceService {
-
+    createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void>
+    updateTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void>
+    deleteTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> 
+    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> 
+    updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void>
+    deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> 
+    selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> 
+    selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> 
+    selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> 
 }
 
 export class TeamSpaceService {

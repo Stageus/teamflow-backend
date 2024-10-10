@@ -6,6 +6,14 @@ import { TSMemberDto } from './dto/tsMember.dto';
 
 interface ITeamSpaceController {
     addTeamSpace (req: Request, res: Response, next: NextFunction): Promise<void>
+    putTeamSpace (req: Request, res: Response, next: NextFunction): Promise<void> 
+    deleteTeamSpace (req: Request, res: Response, next: NextFunction): Promise<void> 
+    getUserList (req: Request, res: Response, next: NextFunction): Promise<void>
+    putUserAuth (req: Request, res: Response, next: NextFunction): Promise<void>
+    deleteTSUser (req: Request, res: Response, next: NextFunction): Promise<void>
+    getTSList (req: Request, res: Response, next: NextFunction): Promise<void> 
+    getTSOwnList (req: Request, res: Response, next: NextFunction): Promise<void>
+    getTSParList (req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class TeamSpaceController implements ITeamSpaceController {

@@ -4,11 +4,22 @@ import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager, member, teamManager } from "../../../common/const/ts_role";
 import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
 import { privateType } from "../../../common/const/ch_type";
-import { TeamSpaceDto } from "../dto/teamSpace.dto";
 import { TSParListDetailEntity } from "../entity/tsParListDetail.entity";
 
 interface ITeamSpaceRepository {
-
+    addTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
+    getTeamSpaceOwner(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
+    putTeamSpaceName(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
+    deleteTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
+    getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberDetailEntity[]> 
+    getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
+    putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void> 
+    putMemberAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
+    deleteManager(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
+    deleteMember(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
+    getTSList(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberEntity[]>
+    getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<TSMemberEntity[]>
+    getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSParListDetailEntity[]>
 }
 
 export class TeamSpaceRepository implements ITeamSpaceRepository {
