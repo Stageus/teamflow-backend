@@ -9,6 +9,8 @@ import { ChannelEntity } from "./channel.entity";
 import { privateType } from "../../../common/const/ch_type";
 import { TSMemberEntity } from "../../team-spaces/entity/tsMember.entity";
 import { UserDto } from "../../users/dto/users.dto";
+import { ChannelMemberEntity } from "./channelMember.entity";
+import { ChannelMemberDto } from "../dto/channelMember.dto";
 
 interface IChannelService {
     createChannel (channelDto: ChannelDto): Promise<void>
@@ -76,5 +78,28 @@ export class ChannelService implements IChannelService {
         }
 
         await this.channelRepository.deleteChannel(channelEntity, this.pool)
+    }
+
+    async deleteChannelUser(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: channelMemberDto.channelIdx,
+            channelUserIdx: channelMemberDto.channelUserIdx
+        })
+
+        const channelEntity = new ChannelEntity({
+            channelIdx: channelMemberDto.channelIdx
+        })
+
+        await this.channelRepository.getChannelOwner(channelEntity, this.pool)
+
+        if (userDto.userIdx !== channelEntity.ownerIdx) {
+            throw this.customError.forbiddenException('해당 channel 소유자만 가능')
+        }
+
+        if (channelEntity.ownerIdx === channelMemberEntity.channelUserIdx) {
+            throw this.customError.badRequestException('본인은 추방할 수 없음')
+        }
+
+        await this.channelRepository.deleteChannelUser(channelMemberEntity, this.pool)
     }
 }

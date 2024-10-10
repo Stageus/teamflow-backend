@@ -12,7 +12,7 @@ interface ITeamSpaceRepository {
     putTeamSpaceName(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     deleteTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberDetailEntity[]> 
-    getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<number>
+    getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberEntity>
     putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void> 
     putMemberAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
     deleteManager(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
@@ -97,7 +97,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         }))
     }
 
-    async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<number> {
+    async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSMemberEntity> {
         const tsMemberQueryResult = await conn.query(
             `SELECT ts_role_idx FROM team_flow_management.ts_member WHERE ts_idx = $1 AND user_idx = $2`,
             [tsMemberEntity.teamSpaceIdx, tsMemberEntity.tsUserIdx]
@@ -107,7 +107,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             tsMemberEntity.roleIdx = tsMemberQueryResult.rows[0].ts_role_idx
         }
 
-        return tsMemberEntity.roleIdx!
+        return tsMemberEntity
     }
 
     async putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
