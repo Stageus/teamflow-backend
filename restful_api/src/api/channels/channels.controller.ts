@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ChannelService } from "./entity/channels.service";
+import { ChannelService } from "./channels.service";
 import { ChannelDto } from "./dto/channel.dto";
 import { UserDto } from "../users/dto/users.dto";
 import { ChannelMemberDto } from "./dto/channelMember.dto";
