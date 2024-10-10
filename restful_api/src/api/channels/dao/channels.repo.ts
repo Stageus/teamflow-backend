@@ -1,6 +1,5 @@
 import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
-import { ChannelDto } from "../dto/channel.dto";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
 import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
 
@@ -8,6 +7,9 @@ interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
     getChannelOwner (channelEntity: ChannelEntity, conn: Pool): Promise<void>
     putChannelName (channelEntity: ChannelEntity, conn: Pool): Promise<void> 
+    deleteChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
+    deleteChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
+    getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<ChMemberDetailEntity[]>
 }
 
 export class ChannelRepository implements IChannelRepository {

@@ -9,7 +9,7 @@ interface IChannelController {
     putChannelName (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannel (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannelUser(req: Request, res: Response, next: NextFunction): Promise<void>
-
+    getChannelUserList(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class ChannelController implements IChannelController {

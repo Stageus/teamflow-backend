@@ -16,7 +16,9 @@ import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 interface IChannelService {
     createChannel (channelDto: ChannelDto): Promise<void>
     updateChannelName (userDto: UserDto, channelDto: ChannelDto): Promise<void>
-
+    deleteChannel (userDto: UserDto, channelDto: ChannelDto): Promise<void> 
+    deleteChannelUser(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
+    selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]>
 }
 
 export class ChannelService implements IChannelService {
@@ -43,7 +45,7 @@ export class ChannelService implements IChannelService {
             channelName: channelDto.channelName
         })
 
-        const roleIdx = await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
         if (tsMemberEntity.roleIdx !== teamManager) {
             throw this.customError.forbiddenException('team manager만 가능')
