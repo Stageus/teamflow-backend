@@ -54,10 +54,37 @@ teamSpaceRouter.put(
     checkVerifyToken.checkVerifyAccessToken(),
     tsMemberDto.checkRegx([
         ['teamSpaceIdx', regx.idxRegx],
-        ['userIdx', regx.idxRegx],
-        ['roleIdx', regx.idxRegx]
+        ['tsUserIdx', regx.idxRegx]
     ]),
     wrapper(controller.teamSpaceController.putUserAuth.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.delete(
+    "/:teamSpaceIdx/user",
+    checkVerifyToken.checkVerifyAccessToken(),
+    tsMemberDto.checkRegx([
+        ['teamSpaceIdx', regx.idxRegx],
+        ['tsUserIdx', regx.idxRegx]
+    ]),
+    wrapper(controller.teamSpaceController.deleteTSUser.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.get(
+    "/list",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSList.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.get(
+    "/list/own",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSOwnList.bind(controller.teamSpaceController))
+)
+
+teamSpaceRouter.get(
+    "/list/participation",
+    checkVerifyToken.checkVerifyAccessToken(),
+    wrapper(controller.teamSpaceController.getTSParList.bind(controller.teamSpaceController))
 )
 
 export default teamSpaceRouter

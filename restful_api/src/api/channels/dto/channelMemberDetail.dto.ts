@@ -1,22 +1,20 @@
-interface ITSMemberDetailDto {
-    tsUserIdx?: number
+interface IChMemberDetailDto {
+    channelUserIdx?: number
     roleIdx?: number
     nickname?: string
     email?: string
     profile?: string
-    teamSpaceName?: string
 }
 
-export class TSMemberDetailDto implements ITSMemberDetailDto {
-    tsUserIdx?: number
+export class ChMemberDetailDto implements IChMemberDetailDto {
+    channelUserIdx?: number
     roleIdx?: number
     nickname?: string
     email?: string
     profile?: string
-    teamSpaceName?: string
 
     constructor(
-       data?: Partial<ITSMemberDetailDto>
+       data?: Partial<IChMemberDetailDto>
     ) { 
         if (data) {
             Object.assign(this, data)

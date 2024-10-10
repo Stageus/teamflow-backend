@@ -1,20 +1,20 @@
-import { CustomError } from "../../../common/exception/customError"
 import { Request, Response, NextFunction } from 'express'
+import { CustomError } from "../../../common/exception/customError"
 
-interface ITeamSpaceDto {
-    ownerIdx?: number
-    teamSpaceName?: string
-    teamSpaceIdx?: number
-    page?: number
+interface IChannelDto {
+    teamSpaceIdx?: number,
+    channelName?: string
+    ownerIdx?: number,
+    channelIdx?: number,
 }
 
-export class TeamSpaceDto implements ITeamSpaceDto {
-    ownerIdx?: number
-    teamSpaceName?: string
+export class ChannelDto implements IChannelDto {
     teamSpaceIdx?: number
-    page?: number
+    channelName?: string
+    ownerIdx?: number
+    channelIdx?: number
 
-    constructor(data?: Partial<ITeamSpaceDto>) {
+    constructor(data?: Partial<IChannelDto>) {
         if (data) {
             Object.assign(this, data)
         }

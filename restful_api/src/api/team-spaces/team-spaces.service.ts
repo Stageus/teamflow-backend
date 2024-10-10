@@ -7,9 +7,19 @@ import { CustomError } from "../../common/exception/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
 import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
+import { member, teamManager } from "../../common/const/ts_role";
+import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
 
 interface ITeamSpaceService {
-
+    createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void>
+    updateTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void>
+    deleteTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> 
+    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> 
+    updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void>
+    deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> 
+    selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> 
+    selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> 
+    selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> 
 }
 
 export class TeamSpaceService {
@@ -76,7 +86,117 @@ export class TeamSpaceService {
         }))
     }
 
-    async updateUserAuth(tsMemberDto: TSMemberDto): Promise<void> {
+    async updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx
+        })
+
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx,
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        if (!tsMemberEntity.roleIdx) {
+            throw this.customError.notFoundException('해당 user는 teamspace 소속이 아님')
+        }
+
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.teamSpaceRepository.putManagerAuth(tsMemberEntity, this.pool)
+        }
+
+        if (tsMemberEntity.roleIdx === member) {
+            return await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
+        }
+    }
+
+    async deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity ({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx
+        })
+
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx,
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.teamSpaceRepository.deleteManager(tsMemberEntity, this.pool)
+        }
+
+        if (tsMemberEntity.roleIdx === member) {
+            return await this.teamSpaceRepository.deleteMember(tsMemberEntity, this.pool)
+        }
+    }
+
+    async selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> {
+        const tsMemberEntity = new TSMemberEntity({
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        const tsList = await this.teamSpaceRepository.getTSList(tsMemberEntity, this.pool)
+
+        if (tsList.length === 0) {
+            throw this.customError.notFoundException('소속된 teamspace가 없음')
+        }
+
+        return tsList.map(ts => new TSMemberDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx
+        }))
+    }
+
+    async selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> {{
+        const teamSpaceEntity = new TeamSpaceEntity({
+            ownerIdx: teamSpaceDto.ownerIdx,
+        })
+
+        const tsOwnList = await this.teamSpaceRepository.getTSOwnList(teamSpaceDto.page!, teamSpaceEntity, this.pool)
         
+        if (tsOwnList.length === 0) {
+            throw this.customError.notFoundException('생성한 teamspace가 없음')
+        }
+
+        return tsOwnList.map(ts => new TSMemberDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx
+        }))
+    }}
+
+    async selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> {
+        const tsMemberEntity = new TSMemberEntity({
+            tsUserIdx: tsMemberDto.tsUserIdx
+        })
+
+        const tsParList = await this.teamSpaceRepository.getTSParList(tsMemberDto.page!, tsMemberEntity, this.pool)
+
+        if (tsParList.length === 0) {
+            throw this.customError.notFoundException('참여 중인 teamspace가 없음')
+        }
+
+        return tsParList.map(ts => new TSParListDetailDto({
+            teamSpaceIdx: ts.teamSpaceIdx,
+            teamSpaceName: ts.teamSpaceName,
+            roleIdx: ts.roleIdx,
+            generalManagerNickname: ts.generalManagerNickname,
+            generalManagerEmail: ts.generalManagerEmail
+        }))
     }
 }

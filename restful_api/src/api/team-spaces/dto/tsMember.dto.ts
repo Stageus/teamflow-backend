@@ -5,7 +5,9 @@ interface ITSMemberDto {
     tsUserIdx?: number,
     roleIdx?: number,
     teamSpaceIdx?: number,
-    searchWord?: string
+    searchWord?: string,
+    page?: number,
+    teamSpaceName?: string
 }
 
 export class TSMemberDto implements ITSMemberDto {
@@ -13,6 +15,8 @@ export class TSMemberDto implements ITSMemberDto {
     roleIdx?: number
     teamSpaceIdx?: number
     searchWord?: string
+    page?: number
+    teamSpaceName?: string
 
     constructor(data?: Partial<ITSMemberDto>) {
         if (data) {
@@ -22,13 +26,13 @@ export class TSMemberDto implements ITSMemberDto {
 
     checkRegx(params: [string, RegExp][]): (req: Request, res: Response, next: NextFunction) => void  {
         const customError = new CustomError()
-        
+
         return (req, res, next) => {
             try {
                 params.forEach(([paramName, paramRegx]) => {
                     const value = req.query[paramName] || req.params[paramName] || req.body[paramName]
 
-                    if (!value.match(paramRegx)) {
+                    if (!value.toString().match(paramRegx)) {
                         throw customError.badRequestException(`${paramName}의 입력을 확인해야 함`)
                     }
                 })
