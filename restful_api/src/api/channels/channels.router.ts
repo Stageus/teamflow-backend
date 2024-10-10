@@ -20,4 +20,14 @@ channelRouter.post(
     wrapper(controller.channelController.addChannel.bind(controller.channelController))
 )
 
+channelRouter.put(
+    "/:channelIdx",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelDto.checkRegx([
+        ["channelIdx", regx.idxRegx],
+        ["channelName", regx.channelNameRegx]
+    ]),
+    wrapper(controller.channelController.putChannelName.bind(controller.channelController))
+)
+
 export default channelRouter

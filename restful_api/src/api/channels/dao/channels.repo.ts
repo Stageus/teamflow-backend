@@ -1,8 +1,9 @@
 import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
+import { ChannelDto } from "../dto/channel.dto";
 
 interface IChannelRepository {
-
+    createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
 }
 
 export class ChannelRepository implements IChannelRepository {
@@ -24,5 +25,21 @@ export class ChannelRepository implements IChannelRepository {
             [channelEntity.channelIdx, channelEntity.ownerIdx]
         )
         await conn.query('COMMIT')
+    }
+
+    async getChannelOwner (channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<void> {
+        const channelOwnerQueryResult = await conn.query(
+            `SELECT owner_idx FROM team_flow_management.channel WHERE ch_idx=$1`,
+            [channelEntity.channelIdx]
+        )
+
+        channelEntity.ownerIdx = channelOwnerQueryResult.rows[0].owner_idx
+    }
+
+    async putChannelName (channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.channel SET ch_name=$1 WHERE ch_idx=$2`,
+            [channelEntity.channelName, channelEntity.channelIdx]
+        )
     }
 }

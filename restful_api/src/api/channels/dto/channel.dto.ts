@@ -4,13 +4,15 @@ import { CustomError } from "../../../common/exception/customError"
 interface IChannelDto {
     teamSpaceIdx?: number,
     channelName?: string
-    ownerIdx?: number
+    ownerIdx?: number,
+    channelIdx?: number,
 }
 
 export class ChannelDto implements IChannelDto {
     teamSpaceIdx?: number
     channelName?: string
     ownerIdx?: number
+    channelIdx?: number
 
     constructor(data?: Partial<IChannelDto>) {
         if (data) {

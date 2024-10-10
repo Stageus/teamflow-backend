@@ -8,9 +8,10 @@ import { CustomError } from "../../../common/exception/customError";
 import { ChannelEntity } from "./channel.entity";
 import { privateType } from "../../../common/const/ch_type";
 import { TSMemberEntity } from "../../team-spaces/entity/tsMember.entity";
+import { UserDto } from "../../users/dto/users.dto";
 
 interface IChannelService {
-
+    createChannel (channelDto: ChannelDto): Promise<void>
 }
 
 export class ChannelService implements IChannelService {
@@ -44,5 +45,20 @@ export class ChannelService implements IChannelService {
         }
 
         await this.channelRepository.createChannel(channelEntity, this.pool)
+    }
+
+    async updateChannelName (userDto: UserDto, channelDto: ChannelDto): Promise<void> {
+        const channelEntity = new ChannelEntity({
+            channelIdx: channelDto.channelIdx,
+            channelName: channelDto.channelName
+        })
+
+        await this.channelRepository.getChannelOwner(channelEntity, this.pool)
+
+        if (userDto.userIdx !== channelEntity.ownerIdx) {
+            throw this.customError.forbiddenException('해당 channel 소유자만 가능')
+        }
+
+        await this.channelRepository.putChannelName(channelEntity, this.pool)
     }
 }
