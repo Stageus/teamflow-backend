@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomError } from "../exception/customError";
+import { CustomError } from "../custom/customError";
 import jwt from 'jsonwebtoken'
 import { jwtAccessSecretKey, jwtRefreshSecretKey, jwtSignUpSecretKey } from "../const/environment";
 import { generateAccessToken } from "../utils/generateToken";

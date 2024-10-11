@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { sendGmailPassword, sendGmailUser } from '../const/environment'
 import { TSInvitationDto } from '../../api/invitations/dto/tsInvitation.dto'
-import { CustomError } from '../exception/customError'
+import { CustomError } from '../custom/customError'
 
 export async function sendInvitatedEmail(tsInvitationDto: TSInvitationDto): Promise<Error | void> {
     const transporter = nodemailer.createTransport({
@@ -25,6 +25,8 @@ export async function sendInvitatedEmail(tsInvitationDto: TSInvitationDto): Prom
             <p><a href="http://localhost:3001/users/google/login" style="color: blue; text-decoration: underline;">초대 링크</a></p>
             <p>감사합니다!</p>`
     }
+    
+    console.log(tsInvitationDto)
 
     try {
         await transporter.sendMail(mailOptions)
