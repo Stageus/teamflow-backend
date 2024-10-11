@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
 import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
+import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -88,4 +89,36 @@ export class ChannelRepository implements IChannelRepository {
             profile: row.profile_image
         }))
     }
+
+    async getTSByChannelIdx(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<number> {
+        const tsIdxQueryResult = await conn.query(
+            `SELECT ts_idx FROM team_flow_management.channel WHERE ch_idx=$1`,
+            [channelMemberEntity.channelIdx]
+        )
+
+        return tsIdxQueryResult.rows[0].ts_idx
+    }
+
+    async getIsChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<number> {
+        const isChannelUserQueryResult = await conn.query(
+            `SELECT 1 FROM team_flow_management.private_ch_member WHERE ch_idx=$1 AND user_idx =$2`,
+            [channelMemberEntity.channelIdx, channelMemberEntity.channelUserIdx]
+        )
+
+        return isChannelUserQueryResult.rows[0]
+    }
+
+    async createChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool):Promise<void> {
+        await conn.query(
+            `INSERT INTO team_flow_management.private_ch_member (ch_idx, user_idx) VALUES ($1, $2)`,
+            [channelMemberEntity.channelIdx, channelMemberEntity.channelUserIdx]
+        )
+    }
+
+    async putChannelManager(teamSpaceEntity: TeamSpaceEntity, channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.channel SET owner_idx=$1 WHERE ts_idx=$2`,
+            [channelMemberEntity.channelUserIdx, teamSpaceEntity.teamSpaceIdx]
+        )
+    }    
 }

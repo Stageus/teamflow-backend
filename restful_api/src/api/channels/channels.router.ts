@@ -60,4 +60,14 @@ channelRouter.get(
     wrapper(controller.channelController.getChannelUserList.bind(controller.channelController))
 )
 
+channelRouter.put(
+    "/:channelIdx/manager",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelMemberDto.checkRegx([
+        ["channelIdx", regx.idxRegx ],
+        ["channelUserIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.putChannelManager.bind(controller.channelController))
+)
+
 export default channelRouter

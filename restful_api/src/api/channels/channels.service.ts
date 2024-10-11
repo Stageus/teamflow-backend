@@ -7,10 +7,11 @@ import { ChannelDto } from "./dto/channel.dto"
 import { TSMemberEntity } from "../team-spaces/entity/tsMember.entity"
 import { ChannelEntity } from "./entity/channel.entity"
 import { privateType } from "../../common/const/ch_type"
-import { teamManager } from "../../common/const/ts_role"
+import { member, teamManager } from "../../common/const/ts_role"
 import { ChannelMemberDto } from "./dto/channelMember.dto"
 import { ChannelMemberEntity } from "./entity/channelMember.entity"
 import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
+import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
 
 
 interface IChannelService {
@@ -124,5 +125,45 @@ export class ChannelService implements IChannelService {
             email: user.email,
             profile: user.profile
        }))
+    }
+
+    async updateChannelManager(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: channelMemberDto.channelIdx,
+            channelUserIdx: channelMemberDto.channelUserIdx
+        })
+
+        const teamSpaceIdx = await this.channelRepository.getTSByChannelIdx(channelMemberEntity, this.pool)
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: teamSpaceIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manger만 가능')
+        }
+        
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: teamSpaceEntity.teamSpaceIdx,
+            tsUserIdx: channelMemberEntity.channelUserIdx
+        })
+
+        const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
+
+        if (!isChannelUser) {
+            await this.channelRepository.createChannel(channelMemberEntity, this.pool)
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+        }
+
+        if (tsMemberEntity.roleIdx === member) {
+            await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
+            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+        }
     }
 }
