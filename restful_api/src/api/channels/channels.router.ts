@@ -70,4 +70,12 @@ channelRouter.put(
     wrapper(controller.channelController.putChannelManager.bind(controller.channelController))
 )
 
+channelRouter.get(
+    "/list",
+    channelDto.checkRegx([
+        ["teamSpaceIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.getChannelList.bind(controller.channelController))
+)
+
 export default channelRouter

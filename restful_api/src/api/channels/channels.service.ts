@@ -166,4 +166,8 @@ export class ChannelService implements IChannelService {
             return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
         }
     }
+
+    async selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<void> {
+        
+    }
 }
