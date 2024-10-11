@@ -6,6 +6,7 @@ interface IChannelDto {
     channelName?: string
     ownerIdx?: number,
     channelIdx?: number,
+    searchWord?: string
 }
 
 export class ChannelDto implements IChannelDto {
@@ -13,6 +14,7 @@ export class ChannelDto implements IChannelDto {
     channelName?: string
     ownerIdx?: number
     channelIdx?: number
+    searchWord?: string
 
     constructor(data?: Partial<IChannelDto>) {
         if (data) {

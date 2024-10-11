@@ -2,6 +2,10 @@ import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
 import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
+import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
+import { ChManagerDetailEntity } from "../entity/channelManagerDetail.entity";
+import { privateType } from "../../../common/const/ch_type";
+import { ChannelListEntity } from "../entity/channelList.entity";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -86,6 +90,74 @@ export class ChannelRepository implements IChannelRepository {
             nickname: row.nickname,
             email: row.email,
             profile: row.profile_image
+        }))
+    }
+
+    async getTSByChannelIdx(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<number> {
+        const tsIdxQueryResult = await conn.query(
+            `SELECT ts_idx FROM team_flow_management.channel WHERE ch_idx=$1`,
+            [channelMemberEntity.channelIdx]
+        )
+
+        return tsIdxQueryResult.rows[0].ts_idx
+    }
+
+    async getIsChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<number> {
+        const isChannelUserQueryResult = await conn.query(
+            `SELECT 1 FROM team_flow_management.private_ch_member WHERE ch_idx=$1 AND user_idx =$2`,
+            [channelMemberEntity.channelIdx, channelMemberEntity.channelUserIdx]
+        )
+
+        return isChannelUserQueryResult.rows[0]
+    }
+
+    async createChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool):Promise<void> {
+        await conn.query(
+            `INSERT INTO team_flow_management.private_ch_member (ch_idx, user_idx) VALUES ($1, $2)`,
+            [channelMemberEntity.channelIdx, channelMemberEntity.channelUserIdx]
+        )
+    }
+
+    async putChannelManager(teamSpaceEntity: TeamSpaceEntity, channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.channel SET owner_idx=$1 WHERE ts_idx=$2`,
+            [channelMemberEntity.channelUserIdx, teamSpaceEntity.teamSpaceIdx]
+        )
+    }
+    
+    async getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<ChManagerDetailEntity[]> {
+        const channelListQueryResult = await conn.query(
+            `SELECT channel.ch_idx, channel.ch_name, channel.owner_idx, "user".nickname
+            FROM team_flow_management.channel
+            JOIN team_flow_management."user" ON channel.owner_idx = "user".user_idx
+            WHERE channel.ts_idx=$1 AND channel.ch_type_idx = $2 AND channel.ch_name LIKE $3
+            ORDER BY channel.ch_name ASC`,
+            [channelEntity.teamSpaceIdx, privateType, `%${searchWord}%`]
+        )
+
+        return channelListQueryResult.rows.map(row => new ChManagerDetailEntity({
+            channelIdx: row.ch_idx,
+            channelName: row.ch_name,
+            managerIdx: row.owner_idx,
+            managerNickname: row.nickname
+        }))
+    }
+
+    async getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<ChannelListEntity[]> {
+        const myChannelListQueryResult = await conn.query(
+            `SELECT private_ch_member.ch_idx, "channel".ch_name, "channel".owner_idx, "ts_member".ts_role_idx
+            FROM team_flow_management.private_ch_member
+            JOIN team_flow_management.channel ON private_ch_member.ch_idx = "channel".ch_idx
+            JOIN team_flow_management.ts_member ON "ts_member".user_idx = private_ch_member.user_idx
+            WHERE "channel".ts_idx=$1 AND "ts_member".ts_idx=$2 AND private_ch_member.user_idx=$3`,
+            [channelMemberEntity.teamSpaceIdx, channelMemberEntity.teamSpaceIdx, channelMemberEntity.channelUserIdx]
+        )
+
+        return myChannelListQueryResult.rows.map(row => new ChannelListEntity({
+            channelIdx: row.ch_idx,
+            channelName: row.ch_name,
+            ownerIdx: row.owner_idx,
+            roleIdx: row.ts_role_idx
         }))
     }
 }

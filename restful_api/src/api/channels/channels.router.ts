@@ -60,4 +60,32 @@ channelRouter.get(
     wrapper(controller.channelController.getChannelUserList.bind(controller.channelController))
 )
 
+channelRouter.put(
+    "/:channelIdx/manager",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelMemberDto.checkRegx([
+        ["channelIdx", regx.idxRegx ],
+        ["channelUserIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.putChannelManager.bind(controller.channelController))
+)
+
+channelRouter.get(
+    "/list",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelDto.checkRegx([
+        ["teamSpaceIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.getChannelList.bind(controller.channelController))
+)
+
+channelRouter.get(
+    "/list/me",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelMemberDto.checkRegx([
+        ["teamSpaceIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.getMyChannelList.bind(controller.channelController))
+)
+
 export default channelRouter

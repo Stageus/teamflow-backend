@@ -7,10 +7,13 @@ import { ChannelDto } from "./dto/channel.dto"
 import { TSMemberEntity } from "../team-spaces/entity/tsMember.entity"
 import { ChannelEntity } from "./entity/channel.entity"
 import { privateType } from "../../common/const/ch_type"
-import { teamManager } from "../../common/const/ts_role"
+import { member, teamManager } from "../../common/const/ts_role"
 import { ChannelMemberDto } from "./dto/channelMember.dto"
 import { ChannelMemberEntity } from "./entity/channelMember.entity"
 import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
+import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
+import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
+import { ChannelListDto } from "./dto/channelList.dto"
 
 
 interface IChannelService {
@@ -124,5 +127,94 @@ export class ChannelService implements IChannelService {
             email: user.email,
             profile: user.profile
        }))
+    }
+
+    async updateChannelManager(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: channelMemberDto.channelIdx,
+            channelUserIdx: channelMemberDto.channelUserIdx
+        })
+
+        const teamSpaceIdx = await this.channelRepository.getTSByChannelIdx(channelMemberEntity, this.pool)
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: teamSpaceIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manger만 가능')
+        }
+        
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: teamSpaceEntity.teamSpaceIdx,
+            tsUserIdx: channelMemberEntity.channelUserIdx
+        })
+
+        const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
+
+        if (!isChannelUser) {
+            await this.channelRepository.createChannel(channelMemberEntity, this.pool)
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+        }
+
+        if (tsMemberEntity.roleIdx === member) {
+            await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
+            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+        }
+    }
+
+    async selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<ChManagerDetailDto[]> {
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: channelDto.teamSpaceIdx
+        })
+
+        const channelEntity = new ChannelEntity({
+            teamSpaceIdx: channelDto.teamSpaceIdx,
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        const channelList = await this.channelRepository.getChannelList(channelDto.searchWord!, channelEntity, this.pool)
+
+        if (channelList.length === 0) {
+            throw this.customError.notFoundException('검색된 채널이 없습니다.')
+        }
+
+        return channelList.map(channel => new ChManagerDetailDto({
+            channelIdx: channel.channelIdx,
+            channelName: channel.channelName,
+            managerIdx: channel.managerIdx,
+            managerNickname: channel.managerNickname
+        }))
+    }
+
+    async selectMyChannelList(channelMemberDto: ChannelMemberDto): Promise<ChannelListDto[]> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            teamSpaceIdx: channelMemberDto.teamSpaceIdx,
+            channelUserIdx: channelMemberDto.channelUserIdx
+        })
+
+        const myChannelList = await this.channelRepository.getMyChannelList(channelMemberEntity, this.pool)
+
+        if (myChannelList.length === 0) {
+            throw this.customError.notFoundException('속한 비공개 채널이 없음')
+        }
+
+        return myChannelList.map(channel => new ChannelListDto({
+            channelIdx: channel.channelIdx,
+            channelName: channel.channelName,
+            roleIdx: channel.roleIdx,
+            isChannelOwner: channel.ownerIdx === channelMemberDto.channelUserIdx
+        }))
     }
 }
