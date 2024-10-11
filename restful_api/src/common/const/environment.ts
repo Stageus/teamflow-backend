@@ -20,5 +20,5 @@ export const s3secretKey = process.env.S3_SECRET_KEY!
 export const s3region = process.env.S3_REGION!
 export const s3bucketName = process.env.S3_BUCKET_NAME!
 
-export const sendGmailUser = process.env.SEND_EMAIL_USER!
+export const sendGmailUser = process.env.SEND_GMAIL_USER!
 export const sendGmailPassword = process.env.SEND_GMAIL_PASSWORD!

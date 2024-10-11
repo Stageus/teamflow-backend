@@ -71,6 +71,15 @@ export class UserController implements IUserController {
             }
         )
 
+        await axios.post<{ name: string; email: string }>(
+            `https://oauth2.googleapis.com/revoke?token=${tokens.access_token}`,
+            {
+                headers: {
+                Authorization: `Bearer ${tokens.access_token}`,
+                },
+            }
+        );
+
         const googleEmail = userInfoResponse.data.email
         const googleProfileImage = userInfoResponse.data.picture
 
