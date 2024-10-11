@@ -11,6 +11,8 @@ interface IChannelController {
     deleteChannelUser(req: Request, res: Response, next: NextFunction): Promise<void>
     getChannelUserList(req: Request, res: Response, next: NextFunction): Promise<void>
     putChannelManager(req: Request, res: Response, next: NextFunction): Promise<void>
+    getChannelList(req: Request, res: Response, next: NextFunction): Promise<void>
+    getMyChannelList(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class ChannelController implements IChannelController {

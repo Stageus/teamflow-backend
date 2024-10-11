@@ -14,6 +14,12 @@ interface IChannelRepository {
     deleteChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
     deleteChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
     getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<ChMemberDetailEntity[]>
+    getTSByChannelIdx(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<number>
+    getIsChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<number>
+    createChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool):Promise<void>
+    putChannelManager(teamSpaceEntity: TeamSpaceEntity, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
+    getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool): Promise<ChManagerDetailEntity[]>
+    getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<ChannelListEntity[]>
 }
 
 export class ChannelRepository implements IChannelRepository {

@@ -22,6 +22,9 @@ interface IChannelService {
     deleteChannel (userDto: UserDto, channelDto: ChannelDto): Promise<void> 
     deleteChannelUser(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
     selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]>
+    updateChannelManager(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
+    selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<ChManagerDetailDto[]>
+    selectMyChannelList(channelMemberDto: ChannelMemberDto): Promise<ChannelListDto[]>
 }
 
 export class ChannelService implements IChannelService {
