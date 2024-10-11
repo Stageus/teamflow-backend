@@ -3,6 +3,8 @@ import { ChannelEntity } from "../entity/channel.entity";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
 import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
 import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
+import { ChManagerDetailEntity } from "../entity/channelManagerDetail.entity";
+import { privateType } from "../../../common/const/ch_type";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -120,5 +122,23 @@ export class ChannelRepository implements IChannelRepository {
             `UPDATE team_flow_management.channel SET owner_idx=$1 WHERE ts_idx=$2`,
             [channelMemberEntity.channelUserIdx, teamSpaceEntity.teamSpaceIdx]
         )
-    }    
+    }
+    
+    async getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<ChManagerDetailEntity[]> {
+        const channelListQueryResult = await conn.query(
+            `SELECT channel.ch_idx, channel.ch_name, channel.owner_idx, "user".nickname
+            FROM team_flow_management.channel
+            JOIN team_flow_management."user" ON channel.owner_idx = "user".user_idx
+            WHERE channel.ts_idx=$1 AND channel.ch_type_idx = $2 AND channel.ch_name LIKE $3
+            ORDER BY channel.ch_name ASC`,
+            [channelEntity.teamSpaceIdx, privateType, `%${searchWord}%`]
+        )
+
+        return channelListQueryResult.rows.map(row => new ChManagerDetailEntity({
+            channelIdx: row.ch_idx,
+            channelName: row.ch_name,
+            managerIdx: row.owner_idx,
+            managerNickname: row.nickname
+        }))
+    }
 }

@@ -72,6 +72,7 @@ channelRouter.put(
 
 channelRouter.get(
     "/list",
+    checkVerifyToken.checkVerifyAccessToken(),
     channelDto.checkRegx([
         ["teamSpaceIdx", regx.idxRegx]
     ]),

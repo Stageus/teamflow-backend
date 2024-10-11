@@ -130,7 +130,8 @@ export class ChannelController implements IChannelController {
         })
 
         const channelDto = new ChannelDto({
-            teamSpaceIdx: req.body.teamSpaceIdx
+            teamSpaceIdx: req.body.teamSpaceIdx,
+            searchWord: req.query.searchWord?.toString()
         })
 
         const channelList = await this.channelService.selectChannelList(userDto, channelDto)

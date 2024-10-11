@@ -12,6 +12,7 @@ import { ChannelMemberDto } from "./dto/channelMember.dto"
 import { ChannelMemberEntity } from "./entity/channelMember.entity"
 import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
+import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
 
 
 interface IChannelService {
@@ -167,7 +168,32 @@ export class ChannelService implements IChannelService {
         }
     }
 
-    async selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<void> {
-        
+    async selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<ChManagerDetailDto[]> {
+        const teamSpaceEntity = new TeamSpaceEntity({
+            teamSpaceIdx: channelDto.teamSpaceIdx
+        })
+
+        const channelEntity = new ChannelEntity({
+            teamSpaceIdx: channelDto.teamSpaceIdx,
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
+            throw this.customError.forbiddenException('general manager만 가능')
+        }
+
+        const channelList = await this.channelRepository.getChannelList(channelDto.searchWord!, channelEntity, this.pool)
+
+        if (channelList.length === 0) {
+            throw this.customError.notFoundException('검색된 채널이 없습니다.')
+        }
+
+        return channelList.map(channel => new ChManagerDetailDto({
+            channelIdx: channel.channelIdx,
+            channelName: channel.channelName,
+            managerIdx: channel.managerIdx,
+            managerNickname: channel.managerNickname
+        }))
     }
 }
