@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
 
 interface IChannelMemberEntity {
+    teamSpaceIdx?: number
     channelMemberIdx?: number,
     channelIdx?: number,
     channelUserIdx?: number

@@ -13,6 +13,7 @@ import { ChannelMemberEntity } from "./entity/channelMember.entity"
 import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
 import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
+import { ChannelListDto } from "./dto/channelList.dto"
 
 
 interface IChannelService {
@@ -194,6 +195,26 @@ export class ChannelService implements IChannelService {
             channelName: channel.channelName,
             managerIdx: channel.managerIdx,
             managerNickname: channel.managerNickname
+        }))
+    }
+
+    async selectMyChannelList(channelMemberDto: ChannelMemberDto): Promise<ChannelListDto[]> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            teamSpaceIdx: channelMemberDto.teamSpaceIdx,
+            channelUserIdx: channelMemberDto.channelUserIdx
+        })
+
+        const myChannelList = await this.channelRepository.getMyChannelList(channelMemberEntity, this.pool)
+
+        if (myChannelList.length === 0) {
+            throw this.customError.notFoundException('속한 비공개 채널이 없음')
+        }
+
+        return myChannelList.map(channel => new ChannelListDto({
+            channelIdx: channel.channelIdx,
+            channelName: channel.channelName,
+            roleIdx: channel.roleIdx,
+            isChannelOwner: channel.ownerIdx === channelMemberDto.channelUserIdx
         }))
     }
 }

@@ -5,6 +5,7 @@ import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
 import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
 import { ChManagerDetailEntity } from "../entity/channelManagerDetail.entity";
 import { privateType } from "../../../common/const/ch_type";
+import { ChannelListEntity } from "../entity/channelList.entity";
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -139,6 +140,24 @@ export class ChannelRepository implements IChannelRepository {
             channelName: row.ch_name,
             managerIdx: row.owner_idx,
             managerNickname: row.nickname
+        }))
+    }
+
+    async getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<ChannelListEntity[]> {
+        const myChannelListQueryResult = await conn.query(
+            `SELECT private_ch_member.ch_idx, "channel".ch_name, "channel".owner_idx, "ts_member".ts_role_idx
+            FROM team_flow_management.private_ch_member
+            JOIN team_flow_management.channel ON private_ch_member.ch_idx = "channel".ch_idx
+            JOIN team_flow_management.ts_member ON "ts_member".user_idx = private_ch_member.user_idx
+            WHERE "channel".ts_idx=$1 AND "ts_member".ts_idx=$2 AND private_ch_member.user_idx=$3`,
+            [channelMemberEntity.teamSpaceIdx, channelMemberEntity.teamSpaceIdx, channelMemberEntity.channelUserIdx]
+        )
+
+        return myChannelListQueryResult.rows.map(row => new ChannelListEntity({
+            channelIdx: row.ch_idx,
+            channelName: row.ch_name,
+            ownerIdx: row.owner_idx,
+            roleIdx: row.ts_role_idx
         }))
     }
 }

@@ -79,4 +79,13 @@ channelRouter.get(
     wrapper(controller.channelController.getChannelList.bind(controller.channelController))
 )
 
+channelRouter.get(
+    "/list/me",
+    checkVerifyToken.checkVerifyAccessToken(),
+    channelMemberDto.checkRegx([
+        ["teamSpaceIdx", regx.idxRegx]
+    ]),
+    wrapper(controller.channelController.getMyChannelList.bind(controller.channelController))
+)
+
 export default channelRouter
