@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { CustomError } from "../../common/exception/customError";
+import { CustomError } from "../../common/custom/customError";
 import { InvitationRepository } from "./dao/invitations.repo";
 import { UserDto } from "../users/dto/users.dto";
 import { TSInvitationDto } from "./dto/tsInvitation.dto";

@@ -3,11 +3,11 @@ import crypto from 'node:crypto'
 import { ouath2Client } from "../../common/const/googleOAuthClient";
 import axios from "axios";
 import { googleClientId, googleClientSecret, googleRedirectUrl } from "../../common/const/environment";
-import { CustomError } from "../../common/exception/customError";
+import { CustomError } from "../../common/custom/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
-import { upload } from "../../common/utils/s3";
+import { Upload } from "../../common/utils/upload";
 import { MulterError } from "multer";
 
 interface IUserController {
@@ -151,7 +151,7 @@ export class UserController implements IUserController {
     }
 
     putProfileImage(req: Request, res: Response, next: NextFunction): void {
-        const imageUpload = upload.single('profileImage')
+        const imageUpload = new Upload().imageUpload().single('profileImage')
 
         const userDto = new UserDto({
             userIdx: req.body.userIdx

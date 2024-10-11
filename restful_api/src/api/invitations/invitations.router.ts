@@ -4,7 +4,7 @@ import { TSInvitationDto } from './dto/tsInvitation.dto'
 import { ChInvitationDto } from './dto/chInvitation.dto'
 import { regx } from '../../common/const/regx'
 import { controller } from '../index.controller'
-import { wrapper } from '../../common/utils/wrapper'
+import { wrapper } from '../../common/custom/wrapper'
 
 const invitationRouter = Router()
 

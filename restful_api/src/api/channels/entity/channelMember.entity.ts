@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CustomError } from "../../../common/exception/customError"
+import { CustomError } from "../../../common/custom/customError"
 
 interface IChannelMemberEntity {
     teamSpaceIdx?: number

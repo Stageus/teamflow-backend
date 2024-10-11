@@ -1,7 +1,7 @@
 import { Pool } from "pg"
 import { TeamSpaceRepository } from "../team-spaces/dao/team-sapces.repo"
 import { ChannelRepository } from "./dao/channels.repo"
-import { CustomError } from "../../common/exception/customError"
+import { CustomError } from "../../common/custom/customError"
 import { UserDto } from "../users/dto/users.dto"
 import { ChannelDto } from "./dto/channel.dto"
 import { TSMemberEntity } from "../team-spaces/entity/tsMember.entity"

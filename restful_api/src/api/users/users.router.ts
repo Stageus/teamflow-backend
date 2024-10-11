@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { wrapper } from "../../common/utils/wrapper";
+import { wrapper } from "../../common/custom/wrapper";
 import { controller } from "../index.controller";
 import { CheckVerifyToken } from "../../common/pipes/checkVerifyToken";
 import { UserDto } from "./dto/users.dto";

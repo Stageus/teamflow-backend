@@ -3,7 +3,7 @@ import { TeamSpaceRepository } from "./dao/team-sapces.repo";
 import { TeamSpaceDto } from "./dto/teamSpace.dto";
 import { TeamSpaceEntity } from "./entity/teamSpace.entity";
 import { UserDto } from "../users/dto/users.dto";
-import { CustomError } from "../../common/exception/customError";
+import { CustomError } from "../../common/custom/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
 import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
