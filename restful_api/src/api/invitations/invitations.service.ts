@@ -7,10 +7,11 @@ import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity";
 import { TeamSpaceRepository } from "../team-spaces/dao/team-sapces.repo";
 import { UserEntity } from "../users/entity/users.entity";
 import { UserRepository } from "../users/dao/users.repo";
-import { sendInvitatedEmail } from "../../common/utils/sendInvitedMail";
+import { SendMail } from "../../common/utils/sendMail";
+import { TSInvitationEntity } from "./entity/tsInvitation.entity";
 
 interface IInvitationService{
-
+    createTSInvited(userDto: UserDto, tsInvitationDto: TSInvitationDto): Promise<void>
 }
 
 export class InvitationService implements IInvitationService {
@@ -48,6 +49,13 @@ export class InvitationService implements IInvitationService {
         tsInvitationDto.sendNickname = userEntity.nickname
         tsInvitationDto.teamSpaceName = teamSpaceEntity.teamSpaceName
 
-        await sendInvitatedEmail(tsInvitationDto)
+        await new SendMail().sendInvitatedEmail(tsInvitationDto)
+
+        const tsInvitationEntity = new TSInvitationEntity({
+            teamSpaceIdx: tsInvitationDto.teamSpaceIdx,
+            email: tsInvitationDto.email
+        })
+
+        await this.invitationRepository.addTSInvited(tsInvitationEntity, this.pool)
     }
 }

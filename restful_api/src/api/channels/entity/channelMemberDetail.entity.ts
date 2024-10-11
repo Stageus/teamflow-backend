@@ -1,17 +1,17 @@
 interface IChMemberDetailEntity {
-    channelUserIdx?: number
-    roleIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
+    channelUserIdx: number | undefined
+    roleIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
 }
 
 export class ChMemberDetailEntity implements IChMemberDetailEntity {
-    channelUserIdx?: number
-    roleIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
+    channelUserIdx: number | undefined
+    roleIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
 
     constructor(
        data?: Partial<IChMemberDetailEntity>

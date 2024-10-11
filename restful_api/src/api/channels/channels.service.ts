@@ -157,7 +157,7 @@ export class ChannelService implements IChannelService {
         const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
 
         if (!isChannelUser) {
-            await this.channelRepository.createChannel(channelMemberEntity, this.pool)
+            await this.channelRepository.createChannelUser(channelMemberEntity, this.pool)
         }
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)

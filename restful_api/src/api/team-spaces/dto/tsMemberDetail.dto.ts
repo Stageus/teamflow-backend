@@ -1,19 +1,19 @@
 interface ITSMemberDetailDto {
-    tsUserIdx?: number
-    roleIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
-    teamSpaceName?: string
+    tsUserIdx: number | undefined
+    roleIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
+    teamSpaceName: string | undefined
 }
 
 export class TSMemberDetailDto implements ITSMemberDetailDto {
-    tsUserIdx?: number
-    roleIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
-    teamSpaceName?: string
+    tsUserIdx: number | undefined
+    roleIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
+    teamSpaceName: string | undefined
 
     constructor(
        data?: Partial<ITSMemberDetailDto>

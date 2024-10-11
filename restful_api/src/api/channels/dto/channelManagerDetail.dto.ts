@@ -1,15 +1,15 @@
 interface IChManagerDetailDto {
-    channelIdx?: number,
-    channelName?: string,
-    managerIdx?: number | null,
-    managerNickname?: string | null
+    channelIdx: number | undefined,
+    channelName: string | undefined, 
+    managerIdx?: number | undefined,
+    managerNickname?: string | undefined
 }
 
 export class ChManagerDetailDto implements IChManagerDetailDto {
-    channelIdx?: number
-    channelName?: string
-    managerIdx?: number | null
-    managerNickname?: string | null
+    channelIdx: number | undefined
+    channelName: string | undefined
+    managerIdx?: number | undefined
+    managerNickname?: string | undefined
 
     constructor(
        data?: Partial<IChManagerDetailDto>

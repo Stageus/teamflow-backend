@@ -2,14 +2,15 @@ import { CustomError } from "../../../common/custom/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface IChInvitationDto {
-    teamSpaceIdx?: number,
-    email?: string,
-    invitedAt?: Date
+    teamSpaceIdx: number | undefined,
+    email: string | undefined,
+    invitedAt: Date | undefined
 }
 
 export class ChInvitationDto implements IChInvitationDto {
-    teamSpaceIdx?: number
-    email?: string
+    teamSpaceIdx: number | undefined
+    email: string | undefined
+    invitedAt: Date | undefined
 
     constructor(data?: Partial<IChInvitationDto>) {
         if (data) {

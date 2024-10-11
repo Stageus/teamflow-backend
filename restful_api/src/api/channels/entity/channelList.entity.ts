@@ -1,15 +1,15 @@
 interface IChannelListEntity {
-    channelIdx?: number,
-    channelName?: string,
-    roleIdx?: number,
-    ownerIdx?: number
+    channelIdx: number | undefined,
+    channelName: string | undefined,
+    roleIdx: number | undefined,
+    ownerIdx?: number | undefined
 }
 
 export class ChannelListEntity implements IChannelListEntity {
-    channelIdx?: number
-    channelName?: string
-    roleIdx?: number
-    ownerIdx?: number
+    channelIdx: number | undefined
+    channelName: string | undefined
+    roleIdx: number | undefined
+    ownerIdx?: number | undefined
 
     constructor(
        data?: Partial<IChannelListEntity>

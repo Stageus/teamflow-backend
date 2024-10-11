@@ -1,15 +1,15 @@
 interface IChannelListDto {
-    channelIdx?: number,
-    channelName?: string,
-    roleIdx?: number,
-    isChannelOwner?: boolean
+    channelIdx: number | undefined,
+    channelName: string | undefined,
+    roleIdx: number | undefined,
+    isChannelOwner: boolean | undefined
 }
 
 export class ChannelListDto implements IChannelListDto {
-    channelIdx?: number
-    channelName?: string
-    roleIdx?: number
-    isChannelOwner?: boolean
+    channelIdx: number | undefined
+    channelName: string | undefined
+    roleIdx: number | undefined
+    isChannelOwner: boolean | undefined
 
     constructor(
        data?: Partial<IChannelListDto>

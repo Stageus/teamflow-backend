@@ -2,23 +2,23 @@ import { CustomError } from "../../../common/custom/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface ITSInvitationDto {
-    teamSpaceIdx?: number,
-    email?: string,
-    invitedAt?: Date
-    sendEmail?: string,
-    sendNickname?: string,
-    toEmail?: string,
-    teamSpaceName?: string
+    teamSpaceIdx: number | undefined,
+    email: string | undefined,
+    invitedAt: Date | undefined,
+    sendEmail: string | undefined,
+    sendNickname: string | undefined,
+    toEmail: string | undefined,
+    teamSpaceName: string | undefined
 }
 
 export class TSInvitationDto implements ITSInvitationDto {
-    teamSpaceIdx?: number
-    email?: string
-    invitedAt?: Date
-    sendEmail?: string
-    sendNickname?: string
-    toEmail?: string
-    teamSpaceName?: string
+    teamSpaceIdx: number | undefined
+    email: string | undefined
+    invitedAt: Date | undefined
+    sendEmail: string | undefined
+    sendNickname: string | undefined
+    toEmail: string | undefined
+    teamSpaceName: string | undefined
 
     constructor(data?: Partial<ITSInvitationDto>) {
         if (data) {

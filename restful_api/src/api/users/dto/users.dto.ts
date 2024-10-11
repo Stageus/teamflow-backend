@@ -2,21 +2,21 @@ import { NextFunction, Request, Response } from "express"
 import { CustomError } from "../../../common/custom/customError"
 
 interface IUserDto {
-    userIdx?: number
-    email?: string
-    profile?: string
-    nickname?: string
-    teamSpaceOwnCount?: number
-    teamSpaceCount?: number
+    userIdx: number | undefined
+    email: string | undefined
+    profile: string | undefined
+    nickname: string | undefined
+    teamSpaceOwnCount: number | undefined
+    teamSpaceCount: number | undefined
 }
 
 export class UserDto implements IUserDto {
-    userIdx?: number
-    email?: string
-    profile?: string
-    nickname?: string
-    teamSpaceOwnCount?: number
-    teamSpaceCount?: number
+    userIdx: number | undefined
+    email: string | undefined
+    profile: string | undefined
+    nickname: string | undefined
+    teamSpaceOwnCount: number | undefined
+    teamSpaceCount: number | undefined
 
     constructor(data?: Partial<IUserDto>) {
         if (data) {

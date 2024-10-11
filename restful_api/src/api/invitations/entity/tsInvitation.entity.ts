@@ -2,17 +2,17 @@ import { CustomError } from "../../../common/custom/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface ITSInvitationEntity {
-    tsInvitationIdx?: number,
-    teamSpaceIdx?: number,
-    email?: string,
-    invitedAt?: Date
+    tsInvitationIdx: number | undefined,
+    teamSpaceIdx: number | undefined,
+    email: string | undefined,
+    invitedAt: Date | undefined
 }
 
 export class TSInvitationEntity implements ITSInvitationEntity {
-    tsInvitationIdx?: number
-    teamSpaceIdx?: number
-    email?: string
-    invitedAt?: Date
+    tsInvitationIdx: number | undefined
+    teamSpaceIdx: number | undefined
+    email: string | undefined
+    invitedAt: Date | undefined
 
     constructor(data?: Partial<ITSInvitationEntity>) {
         if (data) {

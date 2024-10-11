@@ -2,17 +2,15 @@ import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/custom/customError"
 
 interface IChannelMemberEntity {
-    teamSpaceIdx?: number
-    channelMemberIdx?: number,
-    channelIdx?: number,
-    channelUserIdx?: number
+    teamSpaceIdx: number | undefined
+    channelIdx: number | undefined,
+    channelUserIdx: number | undefined
 }
 
 export class ChannelMemberEntity implements IChannelMemberEntity {
-    teamSpaceIdx?: number
-    channelName?: string
-    channelUserIdx?: number
-    channelIdx?: number
+    teamSpaceIdx: number | undefined
+    channelIdx: number | undefined
+    channelUserIdx: number | undefined
 
     constructor(data?: Partial<IChannelMemberEntity>) {
         if (data) {
