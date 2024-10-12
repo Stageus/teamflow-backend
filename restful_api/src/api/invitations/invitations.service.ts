@@ -17,6 +17,7 @@ import { ChInvitationEntity } from "./entity/chInvitation.entity";
 
 interface IInvitationService{
     createTSInvited(userDto: UserDto, tsInvitationDto: TSInvitationDto): Promise<void>
+    createChannelInvitation(userDto: UserDto, chInviationDto: ChInvitationDto): Promise<void>
 }
 
 export class InvitationService implements IInvitationService {
