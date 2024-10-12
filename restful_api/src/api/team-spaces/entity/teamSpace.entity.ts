@@ -1,15 +1,15 @@
 interface ITeamSpaceEntity {
-    teamSpaceIdx?: number,
-    ownerIdx?: number,
-    teamSpaceName?: string,
-    createdAt?: Date
+    teamSpaceIdx: number | undefined,
+    ownerIdx: number | undefined,
+    teamSpaceName: string | undefined,
+    createdAt: Date | undefined
 }
 
 export class TeamSpaceEntity implements ITeamSpaceEntity {
-    teamSpaceIdx?: number
-    ownerIdx?: number
-    teamSpaceName?: string
-    createdAt?: Date
+    teamSpaceIdx: number | undefined
+    ownerIdx: number | undefined
+    teamSpaceName: string | undefined
+    createdAt: Date | undefined
     
     constructor (data?: Partial<ITeamSpaceEntity>) {
         if (data) {

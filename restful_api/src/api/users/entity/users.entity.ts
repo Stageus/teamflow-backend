@@ -1,17 +1,17 @@
 interface IUserEntity {
-    userIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
-    isDeleted?: boolean
+    userIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
+    isDeleted: boolean | undefined
 }
 
 export class UserEntity implements IUserEntity {
-    userIdx?: number
-    nickname?: string
-    email?: string
-    profile?: string
-    isDeleted?: boolean
+    userIdx: number | undefined
+    nickname: string | undefined
+    email: string | undefined
+    profile: string | undefined
+    isDeleted: boolean | undefined
 
     constructor(data?: Partial<IUserEntity>) {
         if (data) {

@@ -2,21 +2,21 @@ import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
 
 interface ITSMemberDto {
-    tsUserIdx?: number,
-    roleIdx?: number,
-    teamSpaceIdx?: number,
-    searchWord?: string,
-    page?: number,
-    teamSpaceName?: string
+    tsUserIdx: number | undefined,
+    roleIdx: number | undefined,
+    teamSpaceIdx: number | undefined,
+    searchWord: string | undefined,
+    page: number | undefined,
+    teamSpaceName: string | undefined
 }
 
 export class TSMemberDto implements ITSMemberDto {
-    tsUserIdx?: number
-    roleIdx?: number
-    teamSpaceIdx?: number
-    searchWord?: string
-    page?: number
-    teamSpaceName?: string
+    tsUserIdx: number | undefined
+    roleIdx: number | undefined
+    teamSpaceIdx: number | undefined
+    searchWord: string | undefined
+    page: number | undefined
+    teamSpaceName: string | undefined
 
     constructor(data?: Partial<ITSMemberDto>) {
         if (data) {

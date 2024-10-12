@@ -2,17 +2,17 @@ import { CustomError } from "../../../common/exception/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface ITeamSpaceDto {
-    ownerIdx?: number
-    teamSpaceName?: string
-    teamSpaceIdx?: number
-    page?: number
+    ownerIdx: number | undefined
+    teamSpaceName: string | undefined
+    teamSpaceIdx: number | undefined
+    page: number | undefined
 }
 
 export class TeamSpaceDto implements ITeamSpaceDto {
-    ownerIdx?: number
-    teamSpaceName?: string
-    teamSpaceIdx?: number
-    page?: number
+    ownerIdx: number | undefined
+    teamSpaceName: string | undefined
+    teamSpaceIdx: number | undefined
+    page: number | undefined
 
     constructor(data?: Partial<ITeamSpaceDto>) {
         if (data) {

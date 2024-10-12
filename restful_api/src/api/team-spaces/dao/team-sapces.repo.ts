@@ -20,6 +20,7 @@ interface ITeamSpaceRepository {
     getTSList(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberEntity[]>
     getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<TSMemberEntity[]>
     getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSParListDetailEntity[]>
+    getTSNameByIdx(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void> 
 }
 
 export class TeamSpaceRepository implements ITeamSpaceRepository {
@@ -225,5 +226,13 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             generalManagerNickname: row.nickname,
             generalManagerEmail: row.email
         }))
+    }
+    async getTSNameByIdx(teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<void> {
+       const tsNameQueryResult = await conn.query(
+        `SELECT ts_name FROM team_flow_management.team_space WHERE ts_idx=$1`,
+        [teamSpaceEntity.teamSpaceIdx]
+       )
+
+       teamSpaceEntity.teamSpaceName = tsNameQueryResult.rows[0].ts_name
     }
 }

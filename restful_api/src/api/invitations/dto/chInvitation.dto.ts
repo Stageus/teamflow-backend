@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
+import { Request, Response, NextFunction } from 'express'
 
-interface IChannelMemberEntity {
-    teamSpaceIdx: number | undefined
+interface IChInvitationDto {
     channelIdx: number | undefined,
-    channelUserIdx: number | undefined
+    userIdx: number | undefined,
+    invitedAt: Date | undefined
 }
 
-export class ChannelMemberEntity implements IChannelMemberEntity {
-    teamSpaceIdx: number | undefined
+export class ChInvitationDto implements IChInvitationDto {
     channelIdx: number | undefined
-    channelUserIdx: number | undefined
+    userIdx: number | undefined
+    invitedAt: Date | undefined
 
-    constructor(data?: Partial<IChannelMemberEntity>) {
+    constructor(data?: Partial<IChInvitationDto>) {
         if (data) {
             Object.assign(this, data)
         }

@@ -1,19 +1,19 @@
 interface IChannelEntity {
-    channelIdx?: number,
-    teamSpaceIdx?: number,
-    chTypeIdx?: number,
-    ownerIdx?: number,
-    channelName?: string,
-    createdAt?: Date
+    channelIdx: number | undefined,
+    teamSpaceIdx: number | undefined,
+    chTypeIdx: number | undefined,
+    ownerIdx?: number | undefined,
+    channelName: string | undefined,
+    createdAt: Date | undefined
 }
 
 export class ChannelEntity implements IChannelEntity {
-    channelIdx?: number
-    teamSpaceIdx?: number
-    chTypeIdx?: number
-    ownerIdx?: number
-    channelName?: string
-    createdAt?: Date
+    channelIdx: number | undefined
+    teamSpaceIdx: number | undefined
+    chTypeIdx: number | undefined
+    ownerIdx?: number | undefined
+    channelName: string | undefined
+    createdAt: Date | undefined
 
     constructor(data?: Partial<IChannelEntity>) {
         if (data) {

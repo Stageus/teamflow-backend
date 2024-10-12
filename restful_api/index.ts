@@ -7,6 +7,7 @@ import { serverPort } from "./src/common/const/environment"
 import userRouter from "./src/api/users/users.router"
 import teamSpaceRouter from "./src/api/team-spaces/team-spaces.router"
 import channelRouter from "./src/api/channels/channels.router"
+import invitationRouter from "./src/api/invitations/invitations.router"
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use(cors({
 app.use("/users", userRouter)
 app.use("/team-spaces", teamSpaceRouter)
 app.use("/channels", channelRouter)
+app.use("/invitations", invitationRouter)
 
 const customError = new CustomError()
 

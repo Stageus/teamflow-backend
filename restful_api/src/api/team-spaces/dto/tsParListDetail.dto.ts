@@ -1,18 +1,18 @@
 interface ITSParListDetaiDto {
-    teamSpaceIdx?: number,
-    teamSpaceName?: string,
-    roleIdx?: number,
-    generalManagerNickname?: string,
-    generalManagerEmail?: string
+    teamSpaceIdx: number | undefined,
+    teamSpaceName: string | undefined,
+    roleIdx: number | undefined,
+    generalManagerNickname: string | undefined,
+    generalManagerEmail: string | undefined
 }
 
 export class TSParListDetailDto implements ITSParListDetaiDto{
-    teamSpaceIdx?: number
-    teamSpaceName?: string
-    roleIdx?: number
-    generalManagerNickname?: string
-    generalManagerEmail?: string
-
+    teamSpaceIdx: number | undefined
+    teamSpaceName: string | undefined
+    roleIdx: number | undefined
+    generalManagerNickname: string | undefined
+    generalManagerEmail: string | undefined
+    
     constructor(data?: Partial<ITSParListDetaiDto>) {
         if (data) {
             Object.assign(this, data)

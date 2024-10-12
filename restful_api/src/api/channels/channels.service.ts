@@ -22,6 +22,9 @@ interface IChannelService {
     deleteChannel (userDto: UserDto, channelDto: ChannelDto): Promise<void> 
     deleteChannelUser(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
     selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]>
+    updateChannelManager(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
+    selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<ChManagerDetailDto[]>
+    selectMyChannelList(channelMemberDto: ChannelMemberDto): Promise<ChannelListDto[]>
 }
 
 export class ChannelService implements IChannelService {
@@ -154,7 +157,7 @@ export class ChannelService implements IChannelService {
         const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
 
         if (!isChannelUser) {
-            await this.channelRepository.createChannel(channelMemberEntity, this.pool)
+            await this.channelRepository.createChannelUser(channelMemberEntity, this.pool)
         }
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)

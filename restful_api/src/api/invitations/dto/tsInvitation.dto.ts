@@ -1,18 +1,26 @@
-import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
+import { Request, Response, NextFunction } from 'express'
 
-interface IChannelMemberEntity {
-    teamSpaceIdx: number | undefined
-    channelIdx: number | undefined,
-    channelUserIdx: number | undefined
+interface ITSInvitationDto {
+    teamSpaceIdx: number | undefined,
+    email: string | undefined,
+    invitedAt: Date | undefined,
+    sendEmail: string | undefined,
+    sendNickname: string | undefined,
+    toEmail: string | undefined,
+    teamSpaceName: string | undefined
 }
 
-export class ChannelMemberEntity implements IChannelMemberEntity {
+export class TSInvitationDto implements ITSInvitationDto {
     teamSpaceIdx: number | undefined
-    channelIdx: number | undefined
-    channelUserIdx: number | undefined
+    email: string | undefined
+    invitedAt: Date | undefined
+    sendEmail: string | undefined
+    sendNickname: string | undefined
+    toEmail: string | undefined
+    teamSpaceName: string | undefined
 
-    constructor(data?: Partial<IChannelMemberEntity>) {
+    constructor(data?: Partial<ITSInvitationDto>) {
         if (data) {
             Object.assign(this, data)
         }

@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from 'express'
 import { CustomError } from "../../../common/exception/customError"
 
 interface IChannelDto {
-    teamSpaceIdx?: number,
-    channelName?: string
-    ownerIdx?: number,
-    channelIdx?: number,
-    searchWord?: string
+    teamSpaceIdx: number | undefined,
+    channelName: string | undefined
+    ownerIdx?: number | undefined,
+    channelIdx: number | undefined,
+    searchWord: string | undefined
 }
 
 export class ChannelDto implements IChannelDto {
-    teamSpaceIdx?: number
-    channelName?: string
-    ownerIdx?: number
-    channelIdx?: number
-    searchWord?: string
+    teamSpaceIdx: number | undefined
+    channelName: string | undefined
+    ownerIdx?: number | undefined
+    channelIdx: number | undefined
+    searchWord: string | undefined
 
     constructor(data?: Partial<IChannelDto>) {
         if (data) {

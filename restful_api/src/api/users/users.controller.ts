@@ -7,7 +7,7 @@ import { CustomError } from "../../common/exception/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";
-import { upload } from "../../common/utils/s3";
+import { Upload } from "../../common/utils/upload";
 import { MulterError } from "multer";
 
 interface IUserController {
@@ -70,6 +70,15 @@ export class UserController implements IUserController {
                 headers: { Authorization: `Bearer ${tokens.access_token}`}
             }
         )
+
+        await axios.post<{ name: string; email: string }>(
+            `https://oauth2.googleapis.com/revoke?token=${tokens.access_token}`,
+            {
+                headers: {
+                Authorization: `Bearer ${tokens.access_token}`,
+                },
+            }
+        );
 
         const googleEmail = userInfoResponse.data.email
         const googleProfileImage = userInfoResponse.data.picture
@@ -142,7 +151,7 @@ export class UserController implements IUserController {
     }
 
     putProfileImage(req: Request, res: Response, next: NextFunction): void {
-        const imageUpload = upload.single('profileImage')
+        const imageUpload = new Upload().imageUpload().single('profileImage')
 
         const userDto = new UserDto({
             userIdx: req.body.userIdx
