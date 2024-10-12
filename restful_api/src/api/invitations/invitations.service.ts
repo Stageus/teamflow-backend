@@ -66,7 +66,7 @@ export class InvitationService implements IInvitationService {
         tsInvitationDto.sendNickname = userEntity.nickname
         tsInvitationDto.teamSpaceName = teamSpaceEntity.teamSpaceName
 
-        // await new SendMail().sendInvitatedEmail(tsInvitationDto)
+        await new SendMail().sendInvitatedEmail(tsInvitationDto)
 
         await this.invitationRepository.addTSInvited(userEntity, tsInvitationEntity, this.pool, this.client)
     }
