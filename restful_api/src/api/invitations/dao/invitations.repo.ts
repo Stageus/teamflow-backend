@@ -14,7 +14,7 @@ export class InvitationRepository implements IInvitationRepository {
         private readonly client: MongoClient
     ){}
 
-    async getIsInvited(tsInvitationEntity: TSInvitationEntity, conn: Pool = this.pool): Promise<void> {
+    async getIsTSInvited(tsInvitationEntity: TSInvitationEntity, conn: Pool = this.pool): Promise<void> {
         const isInvitedQueryResult = await conn.query(
             `SELECT ts_invitation_idx, invited_at FROM team_flow_management.ts_invitation WHERE ts_idx=$1 AND email=$2`,
             [tsInvitationEntity.teamSpaceIdx, tsInvitationEntity.email]

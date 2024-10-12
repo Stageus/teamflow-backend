@@ -44,7 +44,7 @@ export class InvitationService implements IInvitationService {
             throw this.customError.forbiddenException('general manger만 가능')
         }
 
-        await this.invitationRepository.getIsInvited(tsInvitationEntity, this.pool)
+        await this.invitationRepository.getIsTSInvited(tsInvitationEntity, this.pool)
 
         if (tsInvitationEntity.invitedAt) {
             if (new Date().getTime() - tsInvitationEntity.invitedAt.getTime() <= 24 * 60 * 60 * 1000 * 7 ) {
