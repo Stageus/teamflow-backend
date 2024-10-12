@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { wrapper } from '../../common/custom/wrapper'
+import { wrapper } from '../../common/utils/wrapper'
 import { controller } from '../index.controller'
 import { CheckVerifyToken } from '../../common/pipes/checkVerifyToken'
 import { ChannelDto } from './dto/channel.dto'

@@ -2,7 +2,7 @@ import "dotenv/config"
 import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import cookieParser from "cookie-parser"
-import { CustomError } from "./src/common/custom/customError"
+import { CustomError } from "./src/common/exception/customError"
 import { serverPort } from "./src/common/const/environment"
 import userRouter from "./src/api/users/users.router"
 import teamSpaceRouter from "./src/api/team-spaces/team-spaces.router"

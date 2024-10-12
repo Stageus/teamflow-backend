@@ -3,7 +3,7 @@ import crypto from 'node:crypto'
 import { ouath2Client } from "../../common/const/googleOAuthClient";
 import axios from "axios";
 import { googleClientId, googleClientSecret, googleRedirectUrl } from "../../common/const/environment";
-import { CustomError } from "../../common/custom/customError";
+import { CustomError } from "../../common/exception/customError";
 import { UserDto } from "./dto/users.dto";
 import { UserService } from "./users.service";
 import { generateAccessToken, generateRefreshToken, generateSignUpToken } from "../../common/utils/generateToken";

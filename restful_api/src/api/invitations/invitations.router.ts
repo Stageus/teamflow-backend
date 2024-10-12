@@ -4,7 +4,7 @@ import { TSInvitationDto } from './dto/tsInvitation.dto'
 import { ChInvitationDto } from './dto/chInvitation.dto'
 import { regx } from '../../common/const/regx'
 import { controller } from '../index.controller'
-import { wrapper } from '../../common/custom/wrapper'
+import { wrapper } from '../../common/utils/wrapper'
 
 const invitationRouter = Router()
 
@@ -20,6 +20,16 @@ invitationRouter.post(
         ['email', regx.emailRegx]
     ]),
     wrapper(controller.invitationController.addTSInvited.bind(controller.invitationController))
+)
+
+invitationRouter.post(
+    "/channel",
+    checkVerifyToken.checkVerifyAccessToken(),
+    chInvitationDto.checkRegx([
+        ['channelIdx', regx.idxRegx],
+        ['channelUserIdx', regx.idxRegx]
+    ]),
+    wrapper(controller.invitationController.addChannelInvited.bind(controller.invitationController))
 )
 
 export default invitationRouter

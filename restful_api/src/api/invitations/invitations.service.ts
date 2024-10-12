@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { CustomError } from "../../common/custom/customError";
+import { CustomError } from "../../common/exception/customError";
 import { InvitationRepository } from "./dao/invitations.repo";
 import { UserDto } from "../users/dto/users.dto";
 import { TSInvitationDto } from "./dto/tsInvitation.dto";
@@ -10,6 +10,10 @@ import { UserRepository } from "../users/dao/users.repo";
 import { SendMail } from "../../common/utils/sendMail";
 import { TSInvitationEntity } from "./entity/tsInvitation.entity";
 import { MongoClient } from "mongodb";
+import { ChInvitationDto } from "./dto/chInvitation.dto";
+import { ChannelRepository } from "../channels/dao/channels.repo";
+import { ChannelEntity } from "../channels/entity/channel.entity";
+import { ChInvitationEntity } from "./entity/chInvitation.entity";
 
 interface IInvitationService{
     createTSInvited(userDto: UserDto, tsInvitationDto: TSInvitationDto): Promise<void>
@@ -22,6 +26,7 @@ export class InvitationService implements IInvitationService {
         private readonly invitationRepository: InvitationRepository,
         private readonly teamSpacaeRepository: TeamSpaceRepository,
         private readonly userRepository: UserRepository,
+        private readonly channelRepository: ChannelRepository,
         private readonly pool: Pool,
         private readonly client: MongoClient
     ) {
@@ -69,5 +74,38 @@ export class InvitationService implements IInvitationService {
         await new SendMail().sendInvitatedEmail(tsInvitationDto)
 
         await this.invitationRepository.addTSInvited(userEntity, tsInvitationEntity, this.pool, this.client)
+    }
+
+    async createChannelInvitation(userDto: UserDto, chInviationDto: ChInvitationDto): Promise<void> {
+        const channelEntity = new ChannelEntity({
+            channelIdx: chInviationDto.channelIdx
+        })
+
+        const chInvitationEntity = new ChInvitationEntity({
+            channelIdx: chInviationDto.channelIdx,
+            userIdx: chInviationDto.userIdx
+        })
+
+        const userEntity = new UserEntity({
+            userIdx: userDto.userIdx
+        })
+
+        await this.channelRepository.getChannelOwner(channelEntity, this.pool)
+
+        if (userDto.userIdx !== channelEntity.ownerIdx) {
+            throw this.customError.forbiddenException('channel manager만 가능')
+        }
+
+        await this.invitationRepository.getIsChannelInvited(chInvitationEntity, this.pool)
+
+        if (chInvitationEntity.invitedAt) {
+            if (new Date().getTime() - chInvitationEntity.invitedAt.getTime() <= 24 * 60 * 60 * 1000 * 7 ) {
+                throw this.customError.conflictException('이미 초대된 user')
+            }
+
+            await this.invitationRepository.deleteChannelInvited(chInvitationEntity, this.pool)
+        }
+
+        await this.invitationRepository.addChannelInvited(userEntity, chInvitationEntity, this.pool, this.client)
     }
 }

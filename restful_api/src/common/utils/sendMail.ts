@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { sendGmailPassword, sendGmailUser } from '../const/environment'
 import { TSInvitationDto } from '../../api/invitations/dto/tsInvitation.dto'
-import { CustomError } from '../custom/customError'
+import { CustomError } from '../exception/customError'
 
 interface ISendMail {
     sendInvitatedEmail(tsInvitationDto: TSInvitationDto): Promise<void> 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CustomError } from "../../../common/custom/customError"
+import { CustomError } from "../../../common/exception/customError"
 
 interface ITSMemberDto {
     tsUserIdx: number | undefined,

@@ -1,4 +1,4 @@
-import { CustomError } from '../custom/customError'
+import { CustomError } from '../exception/customError'
 import multer, { FileFilterCallback } from 'multer' 
 import multerS3 from 'multer-s3'
 import { s3 } from '../const/s3client'

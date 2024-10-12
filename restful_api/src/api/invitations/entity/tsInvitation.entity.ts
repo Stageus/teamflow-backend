@@ -1,4 +1,4 @@
-import { CustomError } from "../../../common/custom/customError"
+import { CustomError } from "../../../common/exception/customError"
 import { Request, Response, NextFunction } from 'express'
 
 interface ITSInvitationEntity {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { CustomError } from "../../../common/custom/customError"
+import { CustomError } from "../../../common/exception/customError"
 
 interface IUserDto {
     userIdx: number | undefined
