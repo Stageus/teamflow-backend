@@ -9,6 +9,7 @@ import { UserEntity } from "../users/entity/users.entity";
 import { UserRepository } from "../users/dao/users.repo";
 import { SendMail } from "../../common/utils/sendMail";
 import { TSInvitationEntity } from "./entity/tsInvitation.entity";
+import { MongoClient } from "mongodb";
 
 interface IInvitationService{
     createTSInvited(userDto: UserDto, tsInvitationDto: TSInvitationDto): Promise<void>
@@ -21,7 +22,8 @@ export class InvitationService implements IInvitationService {
         private readonly invitationRepository: InvitationRepository,
         private readonly teamSpacaeRepository: TeamSpaceRepository,
         private readonly userRepository: UserRepository,
-        private readonly pool: Pool
+        private readonly pool: Pool,
+        private readonly client: MongoClient
     ) {
         this.customError = new CustomError()
     }
@@ -31,10 +33,25 @@ export class InvitationService implements IInvitationService {
             teamSpaceIdx: tsInvitationDto.teamSpaceIdx
         })
 
+         const tsInvitationEntity = new TSInvitationEntity({
+            teamSpaceIdx: tsInvitationDto.teamSpaceIdx,
+            email: tsInvitationDto.toEmail
+        })
+
         await this.teamSpacaeRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manger만 가능')
+        }
+
+        await this.invitationRepository.getIsInvited(tsInvitationEntity, this.pool)
+
+        if (tsInvitationEntity.invitedAt) {
+            if (new Date().getTime() - tsInvitationEntity.invitedAt.getTime() <= 24 * 60 * 60 * 1000 * 7 ) {
+                throw this.customError.conflictException('이미 초대된 user')
+            }
+
+            await this.invitationRepository.deleteTsInvited(tsInvitationEntity, this.pool)
         }
 
         await this.teamSpacaeRepository.getTSNameByIdx(teamSpaceEntity, this.pool)
@@ -49,13 +66,8 @@ export class InvitationService implements IInvitationService {
         tsInvitationDto.sendNickname = userEntity.nickname
         tsInvitationDto.teamSpaceName = teamSpaceEntity.teamSpaceName
 
-        await new SendMail().sendInvitatedEmail(tsInvitationDto)
+        // await new SendMail().sendInvitatedEmail(tsInvitationDto)
 
-        const tsInvitationEntity = new TSInvitationEntity({
-            teamSpaceIdx: tsInvitationDto.teamSpaceIdx,
-            email: tsInvitationDto.email
-        })
-
-        await this.invitationRepository.addTSInvited(tsInvitationEntity, this.pool)
+        await this.invitationRepository.addTSInvited(userEntity, tsInvitationEntity, this.pool, this.client)
     }
 }

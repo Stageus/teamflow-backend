@@ -4,11 +4,12 @@ import pool from "../common/database/postgresql";
 import { TeamSpaceService } from "./team-spaces/team-spaces.service";
 import { ChannelService } from "./channels/channels.service";
 import { InvitationService } from "./invitations/invitations.service";
+import client from "../common/database/mongodb";
 
 const userService = new UserService(repository.userRepository, pool)
 const teamSpaceService = new TeamSpaceService(repository.teamSpaceRepository, pool)
 const channelService = new ChannelService(repository.teamSpaceRepository, repository.channelRepository, pool)
-const invitationService = new InvitationService(repository.invitationRepository, repository.teamSpaceRepository, repository.userRepository, pool)
+const invitationService = new InvitationService(repository.invitationRepository, repository.teamSpaceRepository, repository.userRepository, pool, client)
 
 export const service = {
     userService,

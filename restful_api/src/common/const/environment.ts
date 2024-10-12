@@ -22,3 +22,5 @@ export const s3bucketName = process.env.S3_BUCKET_NAME!
 
 export const sendGmailUser = process.env.SEND_GMAIL_USER!
 export const sendGmailPassword = process.env.SEND_GMAIL_PASSWORD!
+
+export const mongoURI = process.env.MONGO_URI!
