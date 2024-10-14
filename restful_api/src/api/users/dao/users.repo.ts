@@ -11,6 +11,7 @@ interface IUserRepository {
     putProfileImage(userEntity: UserEntity, conn: Pool): Promise<void>
     putNickname(userEntity: UserEntity, conn: Pool): Promise<void>
     withdrawal(userEntity: UserEntity, conn: Pool): Promise<void> 
+    getUserEmail(userEntity: UserEntity, conn: Pool): Promise<void>
 }
 
 interface ITSCount {
@@ -126,5 +127,16 @@ export class UserRepository implements IUserRepository {
             [userEntity.userIdx]
         )
         await conn.query(`COMMIT`)
+    }
+
+    async getUserEmail(userEntity: UserEntity, conn: Pool): Promise<void> {
+        const emailQueryResult = await conn.query(
+            `SELECT email FROM team_flow_management.user WHERE user_idx=$1`,
+            [userEntity.userIdx]
+        )
+
+        if (emailQueryResult.rows.length !== 0) {
+            userEntity.email = emailQueryResult.rows[0].email
+        }
     }
 }
