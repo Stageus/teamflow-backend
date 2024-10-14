@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { NotificationService } from "./notifications.service";
 import { NotificationDto } from "./dto/notification.dto";
+<<<<<<< HEAD
 import { InvitedNotificationDto } from "./dto/invitedNotification.dto";
 import { UserDto } from "../users/dto/users.dto";
 
@@ -8,6 +9,11 @@ interface INotificationController {
     getInvitationList(req: Request, res: Response, next: NextFunction): Promise<void>
     acceptInvitationRequest(req: Request, res: Response, next: NextFunction): Promise<void>
     rejectInvitationRequest(req: Request, res: Response, next: NextFunction): Promise<void>
+=======
+
+interface INotificationController {
+
+>>>>>>> master
 }
 
 export class NotificationController implements INotificationController {
@@ -29,6 +35,7 @@ export class NotificationController implements INotificationController {
             res.status(203).send([[invitationList], [{ accessToken: req.body.accessToken }]])
         }
     }
+<<<<<<< HEAD
 
     async acceptInvitationRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
         const userDto = new UserDto({
@@ -65,4 +72,6 @@ export class NotificationController implements INotificationController {
             res.status(203).send({ accesstoken: req.body.accessToken })
         }
     }
+=======
+>>>>>>> master
 }
