@@ -170,7 +170,7 @@ export class TeamSpaceService {
         const tsOwnList = await this.teamSpaceRepository.getTSOwnList(teamSpaceDto.page!, teamSpaceEntity, this.pool)
         
         if (tsOwnList.length === 0) {
-            throw this.customError.notFoundException('생성한 teamspace가 없음')
+            throw this.customError.notFoundException('더 이상 생성한 teamspace가 없음')
         }
 
         return tsOwnList.map(ts => new TSMemberDto({
@@ -188,7 +188,7 @@ export class TeamSpaceService {
         const tsParList = await this.teamSpaceRepository.getTSParList(tsMemberDto.page!, tsMemberEntity, this.pool)
 
         if (tsParList.length === 0) {
-            throw this.customError.notFoundException('참여 중인 teamspace가 없음')
+            throw this.customError.notFoundException('더 이상 참여 중인 teamspace가 없음')
         }
 
         return tsParList.map(ts => new TSParListDetailDto({

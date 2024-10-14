@@ -2,6 +2,7 @@ interface IInvitedNotificationEntity {
     notificationIdx: number | undefined,
     notificationTypeIdx: number | undefined,
     teamSpaceIdx: number | undefined,
+    invitationIdx: number | undefined,
     channelIdx: number | undefined,
     sendByUserIdx: number | undefined,
     sendToUserEmail: string | undefined,
@@ -14,6 +15,7 @@ export class InvitedNotificationEntity implements IInvitedNotificationEntity {
     notificationIdx: number | undefined
     notificationTypeIdx: number | undefined
     teamSpaceIdx: number | undefined
+    invitationIdx: number | undefined
     channelIdx: number | undefined
     sendByUserIdx: number | undefined
     sendToUserEmail: string | undefined
