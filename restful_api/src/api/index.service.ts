@@ -11,7 +11,7 @@ const userService = new UserService(repository.userRepository, pool)
 const teamSpaceService = new TeamSpaceService(repository.teamSpaceRepository, pool)
 const channelService = new ChannelService(repository.teamSpaceRepository, repository.channelRepository, pool)
 const invitationService = new InvitationService(repository.invitationRepository, repository.teamSpaceRepository, repository.userRepository, repository.channelRepository, pool, client)
-const notificationService = new NotificationService(repository.notificationRepository, repository.userRepository, pool, client)
+const notificationService = new NotificationService(repository.notificationRepository, repository.userRepository, repository.teamSpaceRepository, repository.channelRepository, pool, client)
 
 export const service = {
     userService,

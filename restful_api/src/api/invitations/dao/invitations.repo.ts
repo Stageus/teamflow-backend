@@ -48,7 +48,7 @@ export class InvitationRepository implements IInvitationRepository {
         const notificationEntry = {
             notification_idx: await getSequenceNextValue('notification_idx'),
             notification_type_idx: 1,
-            inviation_idx: tsInvitationIdxQueryResult.rows[0].ts_invitation_idx,
+            invitation_idx: tsInvitationIdxQueryResult.rows[0].ts_invitation_idx,
             team_space_idx: tsInvitationEntity.teamSpaceIdx,
             send_by_user_idx: userEntity.userIdx,
             send_to_email: tsInvitationEntity.email,
