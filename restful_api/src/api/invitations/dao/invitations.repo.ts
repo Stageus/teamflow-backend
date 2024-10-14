@@ -8,6 +8,10 @@ import { ChInvitationEntity } from "../entity/chInvitation.entity";
 interface IInvitationRepository {
     getIsTSInvited(tsInvitationEntity: TSInvitationEntity, conn: Pool): Promise<void>
     deleteTsInvited(tsInvitationEntity: TSInvitationEntity, conn: Pool): Promise<void>
+    addTSInvited(userEntity: UserEntity, tsInvitationEntity: TSInvitationEntity, conn: Pool, mongoConn: MongoClient): Promise<void>
+    getIsChannelInvited(chInvitationEntity: ChInvitationEntity, conn: Pool): Promise<void> 
+    deleteChannelInvited(chInvitationEntity: ChInvitationEntity, conn: Pool): Promise<void>
+    addChannelInvited(userEntity: UserEntity, chInvitationEntity: ChInvitationEntity, conn: Pool, mongoConn: MongoClient): Promise<void>
 }
 
 export class InvitationRepository implements IInvitationRepository {

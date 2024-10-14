@@ -6,6 +6,7 @@ import { ChInvitationDto } from './dto/chInvitation.dto';
 
 interface IInvitationController {
     addTSInvited(req: Request, res: Response, next: NextFunction): Promise<void>
+    addChannelInvited(req: Request, res: Response, next: NextFunction): Promise<void>
 }
 
 export class InvitationController implements IInvitationController {
