@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { CustomError } from "../../../common/exception/customError"
 import { Request, Response, NextFunction } from "express"
 
@@ -7,43 +6,19 @@ interface IInvitedNotificationDto {
     teamSpaceIdx: number | undefined,
     channelIdx: number | undefined,
     createdAt: Date | undefined,
-=======
-interface IInvitedNotificationDto {
-    notificationIdx: number | undefined,
-    notificationTypeIdx: number | undefined,
-    teamSpaceIdx: number | undefined,
-    channelIdx: number | undefined,
-    sendByUserIdx: number | undefined,
-    sendToUserEmail: string | undefined,
-    sendToUserIdx: number | undefined,
-    createdAt: Date | undefined,
-    isRead: boolean | undefined
->>>>>>> master
 }
 
 export class InvitedNotificationDto implements IInvitedNotificationDto {
     notificationIdx: number | undefined
-<<<<<<< HEAD
     teamSpaceIdx: number | undefined
     channelIdx: number | undefined
     createdAt: Date | undefined
-=======
-    notificationTypeIdx: number | undefined
-    teamSpaceIdx: number | undefined
-    channelIdx: number | undefined
-    sendByUserIdx: number | undefined
-    sendToUserEmail: string | undefined
-    sendToUserIdx: number | undefined
-    createdAt: Date | undefined
-    isRead: boolean | undefined
->>>>>>> master
 
     constructor(data?: Partial<IInvitedNotificationDto>) {
         if (data) {
             Object.assign(this, data)
         }
     }
-<<<<<<< HEAD
 
     checkRegx(params: [string, RegExp][]): (req: Request, res: Response, next: NextFunction) => void  {
         const customError = new CustomError()
@@ -64,6 +39,4 @@ export class InvitedNotificationDto implements IInvitedNotificationDto {
             }
         }
     }
-=======
->>>>>>> master
 }
