@@ -5,6 +5,8 @@ import { CustomError } from "../../common/exception/customError";
 import { ThreadsDto } from "./dto/threads.dto";
 import { UserDto } from "../users/dto/users.dto";
 import { ThreadsEntity } from "./entity/threads.entity";
+import { ChannelRepository } from "../channels/dao/channels.repo";
+import { ChannelMemberEntity } from "../channels/entity/channelMember.entity";
 
 interface IThreadService {
     selectThreadList(userDto: UserDto, threadsDto: ThreadsDto): Promise<ThreadsDto[]>
@@ -15,6 +17,7 @@ export class ThreadService implements IThreadService {
 
     constructor(
         private readonly threadsRepository: ThreadRepository,
+        private readonly channelRepository: ChannelRepository,
         private readonly userRepository: UserRepository,
         private readonly pool : Pool
     ){
@@ -25,6 +28,20 @@ export class ThreadService implements IThreadService {
         const threadsEntity = new ThreadsEntity({
             channelIdx: threadsDto.channelIdx
         })
+
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: threadsDto.channelIdx,
+            channelUserIdx: userDto.userIdx
+        })
+
+        const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
+
+        console.log(userDto.userIdx)
+        console.log(isChannelUser)
+
+        if (!isChannelUser) {
+            throw this.customError.forbiddenException('channel 소속 user가 아님')
+        }
 
         const threadListEntity = await this.threadsRepository.getThreadList(threadsEntity, this.pool)
 
@@ -39,24 +56,25 @@ export class ThreadService implements IThreadService {
                 channelIdx: threadsDto.channelIdx
             })
 
-            thread.threadIdx = threadListEntity[i].threadIdx
+            thread.threadIdx = threadListEntity[i].thread_idx
 
             if (threadListEntity[i].content) {
                 thread.content = threadListEntity[i].content
             }
 
-            if (threadListEntity[i].file) {
+            const threadFile = await this.threadsRepository.getThreadFileList(thread.threadIdx!, this.pool)
+
+            if (threadFile.length !== 0) {
                 thread.file = []
-                
-                for (let j = 0; j < threadListEntity[i].file!.length; j++) {
-                    const file_path = threadListEntity[i].file![j]
-                    thread.file.push(file_path)
+
+                for (let j = 0; j < threadFile.length; j++) {
+                    thread.file.push(threadFile[j].file_path)
                 }
             }
 
-            thread.authorName = threadListEntity[i].authorName
+            thread.authorName = await this.userRepository.getUserNickname(threadListEntity[i].user_idx, this.pool)
 
-            if (threadListEntity[i].authorIdx === userDto.userIdx) {
+            if (threadListEntity[i].user_idx === userDto.userIdx) {
                 thread.isAuthor = true
             } else {
                 thread.isAuthor = false
