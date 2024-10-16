@@ -98,9 +98,7 @@ export class NotificationService implements INotificationService {
             }
 
             await this.notificationRepository.acceptTSInvitation(invitedNotificationEntity, this.pool)
-        }
-
-        if (invitedNotificationEntity.notificationTypeIdx === chInvitation) {
+        } else if (invitedNotificationEntity.notificationTypeIdx === chInvitation) {
             const chMemberEntity = new ChannelMemberEntity({
                 channelIdx: invitedNotificationEntity.channelIdx,
                 channelUserIdx: userDto.userIdx
@@ -126,9 +124,7 @@ export class NotificationService implements INotificationService {
 
         if (invitedNotificationEntity.notificationTypeIdx === tsInvitation) {
             await this.notificationRepository.rejectTSInvitation(invitedNotificationEntity, this.pool)
-        }
-
-        if (invitedNotificationEntity.notificationTypeIdx === chInvitation) {
+        } else if (invitedNotificationEntity.notificationTypeIdx === chInvitation) {
             await this.notificationRepository.rejectChInvitation(invitedNotificationEntity, this.pool)
         }
     }

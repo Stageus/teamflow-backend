@@ -14,6 +14,8 @@ import threadRouter from "./src/api/threads/threads.router"
 const app = express()
 
 app.use(express.json())
+// local 환경에서 test 못함,,, test 해보깅1!!
+// 프론트엔드가 cookie 관리하기
 app.use(cookieParser())
 app.use(cors({
     origin: '*'

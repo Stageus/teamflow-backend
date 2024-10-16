@@ -18,6 +18,7 @@ export class ThreadRepository implements IThreadRepository {
         
         const threadList: ThreadsEntity[] = []
 
+        // dao 내용과 service 내용이랑 겹치는 것 같음
         for(let i = 0; i < threadsQueryResult.rows.length; i++) {
             const thread = new ThreadsEntity({
                 channelIdx: threadsEntity.channelIdx
