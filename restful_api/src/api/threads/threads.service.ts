@@ -7,7 +7,7 @@ import { UserDto } from "../users/dto/users.dto";
 import { ThreadsEntity } from "./entity/threads.entity";
 
 interface IThreadService {
-
+    selectThreadList(userDto: UserDto, threadsDto: ThreadsDto): Promise<ThreadsDto[]>
 }
 
 export class ThreadService implements IThreadService {
@@ -27,6 +27,10 @@ export class ThreadService implements IThreadService {
         })
 
         const threadListEntity = await this.threadsRepository.getThreadList(threadsEntity, this.pool)
+
+        if (threadListEntity.length === 0) {
+            throw this.customError.notFoundException('thread가 없음')
+        }
 
         const threadList: ThreadsDto[] = []
         
