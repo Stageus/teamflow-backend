@@ -14,9 +14,6 @@ import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
 import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
 import { ChannelListDto } from "./dto/channelList.dto"
-import { ChManagerDetailEntity } from "./entity/channelManagerDetail.entity"
-import { ChMemberDetailEntity } from "./entity/channelMemberDetail.entity"
-import { ChannelListEntity } from "./entity/channelList.entity"
 
 
 interface IChannelService {

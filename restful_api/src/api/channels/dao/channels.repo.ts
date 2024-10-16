@@ -1,11 +1,9 @@
 import { Pool } from "pg";
 import { ChannelEntity } from "../entity/channel.entity";
 import { ChannelMemberEntity } from "../entity/channelMember.entity";
-import { ChMemberDetailEntity } from "../entity/channelMemberDetail.entity";
 import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
-import { ChManagerDetailEntity } from "../entity/channelManagerDetail.entity";
 import { privateType } from "../../../common/const/ch_type";
-import { ChannelListEntity } from "../entity/channelList.entity";
+
 
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
