@@ -215,7 +215,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             JOIN team_flow_management."user" ON "team_space".owner_idx = "user".user_idx
             WHERE ts_member.user_idx = $1 AND ts_role_idx != $2
             ORDER BY ts_member.joined_at DESC
-            OFFSET $2 FETCH NEXT 6 ROWS ONLY`,
+            OFFSET $3 FETCH NEXT 6 ROWS ONLY`,
             [tsMemberEntity.tsUserIdx, generalManager, page * 6]
         )
 
