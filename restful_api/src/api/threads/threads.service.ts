@@ -7,7 +7,7 @@ import { UserDto } from "../users/dto/users.dto";
 import { ThreadsEntity } from "./entity/threads.entity";
 
 interface IThreadService {
-
+    selectThreadList(userDto: UserDto, threadsDto: ThreadsDto): Promise<ThreadsDto[]>
 }
 
 export class ThreadService implements IThreadService {
