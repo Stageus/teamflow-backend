@@ -5,17 +5,20 @@ import { ChannelRepository } from "./channels/dao/channels.repo";
 import { InvitationRepository } from "./invitations/dao/invitations.repo";
 import client from "../common/database/mongodb";
 import { NotificationRepository } from "./notifications/dao/notifications.repo";
+import { ThreadRepository } from "./threads/dao/threads.repo";
 
 const userRepository = new UserRepository(pool)
 const teamSpaceRepository = new TeamSpaceRepository(pool)
 const channelRepository = new ChannelRepository(pool)
 const invitationRepository = new InvitationRepository(pool, client)
 const notificationRepository = new NotificationRepository(pool, client)
+const threadRepository = new ThreadRepository(pool)
 
 export const repository = {
     userRepository,
     teamSpaceRepository,
     channelRepository,
     invitationRepository,
-    notificationRepository
+    notificationRepository,
+    threadRepository
 }

@@ -9,6 +9,7 @@ import teamSpaceRouter from "./src/api/team-spaces/team-spaces.router"
 import channelRouter from "./src/api/channels/channels.router"
 import invitationRouter from "./src/api/invitations/invitations.router"
 import notificationRouter from "./src/api/notifications/notifications.router"
+import threadRouter from "./src/api/threads/threads.router"
 
 const app = express()
 
@@ -23,6 +24,7 @@ app.use("/team-spaces", teamSpaceRouter)
 app.use("/channels", channelRouter)
 app.use("/invitations", invitationRouter)
 app.use("/notifications", notificationRouter)
+app.use("/threads", threadRouter)
 
 const customError = new CustomError()
 

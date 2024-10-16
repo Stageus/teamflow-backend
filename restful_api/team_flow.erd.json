@@ -318,6 +318,7 @@
           "FfW8KMNNRI_Ba085o-Z7-",
           "124G5WjFWgZw-OS-XazHj",
           "IHWd6_GXxc8uGv4SWfMmQ",
+          "tJkvOpX_inBPlElG9jivu",
           "ch6NWHi4dTx04Lt8D8uNy",
           "pEJvutVYeZbzaXi5lcask"
         ],
@@ -327,6 +328,7 @@
           "124G5WjFWgZw-OS-XazHj",
           "MAfzwDMA6-mP3BhwPSN0P",
           "IHWd6_GXxc8uGv4SWfMmQ",
+          "tJkvOpX_inBPlElG9jivu",
           "ch6NWHi4dTx04Lt8D8uNy",
           "pEJvutVYeZbzaXi5lcask"
         ],
@@ -339,7 +341,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1726555135580,
+          "updateAt": 1729048156979,
           "createAt": 1726555063508
         }
       },
@@ -1646,6 +1648,26 @@
           "updateAt": 1726733969307,
           "createAt": 1726733949209
         }
+      },
+      "tJkvOpX_inBPlElG9jivu": {
+        "id": "tJkvOpX_inBPlElG9jivu",
+        "tableId": "n_vZqv3mn0wGjhfQXDABX",
+        "name": "content",
+        "comment": "",
+        "dataType": "text",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1729048150860,
+          "createAt": 1729048143844
+        }
       }
     },
     "relationshipEntities": {
@@ -1949,7 +1971,7 @@
             "124G5WjFWgZw-OS-XazHj"
           ],
           "x": 698,
-          "y": 830,
+          "y": 842,
           "direction": 2
         },
         "meta": {
@@ -1996,7 +2018,7 @@
             "FfW8KMNNRI_Ba085o-Z7-"
           ],
           "x": 472,
-          "y": 918,
+          "y": 942,
           "direction": 8
         },
         "end": {
@@ -2904,6 +2926,15 @@
         "dataType": 1726733957083,
         "options(notNull)": 1726733958631,
         "default": 1726733969306
+      }
+    ],
+    "tJkvOpX_inBPlElG9jivu": [
+      "tableColumnEntities",
+      1729048143843,
+      -1,
+      {
+        "name": 1729048147837,
+        "dataType": 1729048150859
       }
     ]
   }
