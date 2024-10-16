@@ -13,13 +13,13 @@ interface IChannelRepository {
     putChannelName (channelEntity: ChannelEntity, conn: Pool): Promise<void> 
     deleteChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
     deleteChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
-    getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<ChMemberDetailEntity[]>
+    getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<any[]>
     getTSByChannelIdx(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<number>
     getIsChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<number>
     createChannelUser(channelMemberEntity: ChannelMemberEntity, conn: Pool):Promise<void>
     putChannelManager(teamSpaceEntity: TeamSpaceEntity, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
-    getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool): Promise<ChManagerDetailEntity[]>
-    getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<ChannelListEntity[]>
+    getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool): Promise<any[]>
+    getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<any[]>
 }
 
 export class ChannelRepository implements IChannelRepository {
@@ -79,7 +79,7 @@ export class ChannelRepository implements IChannelRepository {
         await conn.query('COMMIT')
     }
 
-    async getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<ChMemberDetailEntity[]> {
+    async getChannelUserList (searchWord: string, channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<any[]> {
         const channelUserQueryResult = await conn.query(
             `SELECT private_ch_member.user_idx, "ts_member".ts_role_idx, "user".nickname, "user".email, "user".profile_image
             FROM team_flow_management.private_ch_member
@@ -90,13 +90,7 @@ export class ChannelRepository implements IChannelRepository {
             [channelMemberEntity.channelIdx, `%${searchWord}%`]
         )
 
-        return channelUserQueryResult.rows.map(row => new ChMemberDetailEntity({
-            channelUserIdx: row.user_idx,
-            roleIdx: row.ts_role_idx,
-            nickname: row.nickname,
-            email: row.email,
-            profile: row.profile_image
-        }))
+        return channelUserQueryResult.rows
     }
 
     async getTSByChannelIdx(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<number> {
@@ -131,7 +125,7 @@ export class ChannelRepository implements IChannelRepository {
         )
     }
     
-    async getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<ChManagerDetailEntity[]> {
+    async getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool = this.pool): Promise<any[]> {
         const channelListQueryResult = await conn.query(
             `SELECT channel.ch_idx, channel.ch_name, channel.owner_idx, "user".nickname
             FROM team_flow_management.channel
@@ -141,15 +135,10 @@ export class ChannelRepository implements IChannelRepository {
             [channelEntity.teamSpaceIdx, privateType, `%${searchWord}%`]
         )
 
-        return channelListQueryResult.rows.map(row => new ChManagerDetailEntity({
-            channelIdx: row.ch_idx,
-            channelName: row.ch_name,
-            managerIdx: row.owner_idx,
-            managerNickname: row.nickname
-        }))
+        return channelListQueryResult.rows
     }
 
-    async getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<ChannelListEntity[]> {
+    async getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<any[]> {
         const myChannelListQueryResult = await conn.query(
             `SELECT private_ch_member.ch_idx, "channel".ch_name, "channel".owner_idx, "ts_member".ts_role_idx
             FROM team_flow_management.private_ch_member
@@ -159,11 +148,6 @@ export class ChannelRepository implements IChannelRepository {
             [channelMemberEntity.teamSpaceIdx, channelMemberEntity.teamSpaceIdx, channelMemberEntity.channelUserIdx]
         )
 
-        return myChannelListQueryResult.rows.map(row => new ChannelListEntity({
-            channelIdx: row.ch_idx,
-            channelName: row.ch_name,
-            ownerIdx: row.owner_idx,
-            roleIdx: row.ts_role_idx
-        }))
+        return myChannelListQueryResult.rows
     }
 }

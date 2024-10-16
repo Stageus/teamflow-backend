@@ -6,15 +6,17 @@ import { UserDto } from "../users/dto/users.dto";
 import { CustomError } from "../../common/exception/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
-import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
-import { member, teamManager } from "../../common/const/ts_role";
+import { generalManager, member, teamManager } from "../../common/const/ts_role";
+import { TSMemberDetailEntity } from "./entity/tsMemberDetail.entity";
+import { TSParListDetailEntity } from "./entity/tsParListDetail.entity";
 import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
+import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
 
 interface ITeamSpaceService {
     createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void>
     updateTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void>
     deleteTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> 
-    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> 
+    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailEntity[]> 
     updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void>
     deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> 
     selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> 
@@ -22,7 +24,7 @@ interface ITeamSpaceService {
     selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> 
 }
 
-export class TeamSpaceService {
+export class TeamSpaceService implements ITeamSpaceService {
     private customError: CustomError
 
     constructor (
@@ -82,11 +84,11 @@ export class TeamSpaceService {
         }
 
         return tsMemberList.map(member => new TSMemberDetailDto({
-            tsUserIdx: member.tsUserIdx,
-            roleIdx: member.roleIdx,
+            tsUserIdx: member.user_idx,
+            roleIdx: member.ts_role_idx,
             nickname: member.nickname,
             email: member.email,
-            profile: member.profile
+            profile: member.profile_image
         }))
     }
 
@@ -160,9 +162,9 @@ export class TeamSpaceService {
         }
 
         return tsList.map(ts => new TSMemberDto({
-            teamSpaceIdx: ts.teamSpaceIdx,
-            teamSpaceName: ts.teamSpaceName,
-            roleIdx: ts.roleIdx
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: ts.ts_role_idx
         }))
     }
 
@@ -178,10 +180,11 @@ export class TeamSpaceService {
         }
 
         return tsOwnList.map(ts => new TSMemberDto({
-            teamSpaceIdx: ts.teamSpaceIdx,
-            teamSpaceName: ts.teamSpaceName,
-            roleIdx: ts.roleIdx
-        }))
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: generalManager
+        })
+        )
     }}
 
     async selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> {
@@ -196,11 +199,11 @@ export class TeamSpaceService {
         }
 
         return tsParList.map(ts => new TSParListDetailDto({
-            teamSpaceIdx: ts.teamSpaceIdx,
-            teamSpaceName: ts.teamSpaceName,
-            roleIdx: ts.roleIdx,
-            generalManagerNickname: ts.generalManagerNickname,
-            generalManagerEmail: ts.generalManagerEmail
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: ts.ts_role_idx,
+            generalManagerNickname: ts.nickname,
+            generalManagerEmail: ts.email
         }))
     }
 }

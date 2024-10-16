@@ -39,6 +39,7 @@ const notificationService = new NotificationService(
 )
 const threadService = new ThreadService(
     repository.threadRepository,
+    repository.channelRepository,
     repository.userRepository,
     pool
 )

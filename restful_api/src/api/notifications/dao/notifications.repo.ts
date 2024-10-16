@@ -5,7 +5,7 @@ import { chInvitation, tsInvitation } from "../../../common/const/notification_t
 import { member } from "../../../common/const/ts_role";
 
 interface INotificationRepository {
-    getInvitationList(page: number, invitedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient): Promise<InvitedNotificationEntity[]> 
+    getInvitationList(page: number, invitedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient): Promise<any[]> 
     getInvitation(invitatedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient): Promise<void>
     acceptTSInvitation(invitedNotificationEntity: InvitedNotificationEntity, conn: Pool): Promise<void>
     acceptChInvitation(invitatedNotificationEntity: InvitedNotificationEntity, conn: Pool): Promise<void>
@@ -19,7 +19,7 @@ export class NotificationRepository implements INotificationRepository {
         private readonly client: MongoClient
     ){}
 
-    async getInvitationList(page: number, invitedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient = this.client): Promise<InvitedNotificationEntity[]> {
+    async getInvitationList(page: number, invitedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient = this.client): Promise<any[]> {
         const invitationListResult = await mongoConn.db("team_flow").collection("notification").find({
             $or: [
                 { send_to_email : invitedNotificationEntity.sendToUserEmail },
@@ -31,27 +31,8 @@ export class NotificationRepository implements INotificationRepository {
         }).sort({ created_at: -1 }).limit(10).skip(10 * page)
 
         const invitationList = await invitationListResult.toArray()
-        const invitedEntityList: InvitedNotificationEntity[] = []
 
-        for (let i = 0; i < invitationList.length; i++) {
-            const notification = new InvitedNotificationEntity()
-
-            if (invitationList[i].notification_type_idx === tsInvitation) {
-                notification.notificationIdx = invitationList[i].notification_idx
-                notification.notificationTypeIdx = invitationList[i].notification_type_idx
-                notification.teamSpaceIdx = invitationList[i].team_space_idx
-                notification.createdAt = invitationList[i].created_at
-            } else {
-                notification.notificationIdx = invitationList[i].notification_idx
-                notification.notificationTypeIdx = invitationList[i].notification_type_idx
-                notification.channelIdx = invitationList[i].private_channel_idx
-                notification.createdAt = invitationList[i].created_at
-            }
-
-            invitedEntityList.push(notification)
-        }
-
-        return invitedEntityList
+        return invitationList
     }
 
     async getInvitation(invitatedNotificationEntity: InvitedNotificationEntity, mongoConn: MongoClient = this.client): Promise<void> {

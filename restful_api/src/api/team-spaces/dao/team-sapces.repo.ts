@@ -11,15 +11,15 @@ interface ITeamSpaceRepository {
     getTeamSpaceOwner(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     putTeamSpaceName(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
     deleteTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
-    getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberDetailEntity[]> 
+    getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<any[]> 
     getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
     putManagerAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void> 
     putMemberAuth(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
     deleteManager(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
     deleteMember(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<void>
-    getTSList(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSMemberEntity[]>
-    getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<TSMemberEntity[]>
-    getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<TSParListDetailEntity[]>
+    getTSList(tsMemberEntity: TSMemberEntity, conn: Pool): Promise<any[]>
+    getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<any[]>
+    getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool): Promise<any[]>
     getTSNameByIdx(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void> 
 }
 
@@ -79,7 +79,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         )
     }
 
-    async getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSMemberDetailEntity[]> {
+    async getTSMemberList(searchWord: string, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<any[]> {
         const tsMemberQueryResult = await conn.query(
             `SELECT ts_member.user_idx, ts_member.ts_role_idx, "user".profile_image, "user".nickname, "user".email
             FROM team_flow_management.ts_member
@@ -89,13 +89,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [tsMemberEntity.teamSpaceIdx, generalManager, `%${searchWord}%`]
         );
 
-        return tsMemberQueryResult.rows.map(row => new TSMemberDetailEntity({
-            tsUserIdx: row.user_idx,
-            roleIdx: row.ts_role_idx,
-            nickname: row.nickname,
-            email: row.email,
-            profile: row.profile_image
-        }))
+        return tsMemberQueryResult.rows
     }
 
     async getTSMemberByIdx(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<void> {
@@ -174,7 +168,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         await conn.query('COMMIT')
     }
 
-    async getTSList(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSMemberEntity[]> {
+    async getTSList(tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<any[]> {
         const tsListQueryResult = await conn.query(
             `SELECT ts_member.ts_idx, ts_member.ts_role_idx, "team_space".ts_name 
             FROM team_flow_management.ts_member
@@ -183,14 +177,10 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [tsMemberEntity.tsUserIdx]
         )
         
-        return tsListQueryResult.rows.map(row => new TSMemberEntity({
-            teamSpaceIdx: row.ts_idx,
-            teamSpaceName: row.ts_name,
-            roleIdx: row.ts_role_idx
-        }))
+        return tsListQueryResult.rows
     }
 
-    async getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<TSMemberEntity[]> {
+    async getTSOwnList(page: number, teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<any[]> {
         const tsOwnListQueryResult = await conn.query(
             `SELECT ts_idx, ts_name FROM team_flow_management.team_space 
             WHERE owner_idx=$1
@@ -200,14 +190,10 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
         )
         
 
-        return tsOwnListQueryResult.rows.map(row => new TSMemberEntity({
-            teamSpaceIdx: row.ts_idx,
-            teamSpaceName: row.ts_name,
-            roleIdx: generalManager
-        }))
+        return tsOwnListQueryResult.rows
     }
 
-    async getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<TSParListDetailEntity[]> {
+    async getTSParList(page: number, tsMemberEntity: TSMemberEntity, conn: Pool = this.pool): Promise<any[]> {
         const tsParListQueryResult = await conn.query(
             `SELECT ts_member.ts_idx, ts_member.ts_role_idx, "team_space".ts_name, "user".nickname, "user".email
             FROM team_flow_management.ts_member 
@@ -219,13 +205,7 @@ export class TeamSpaceRepository implements ITeamSpaceRepository {
             [tsMemberEntity.tsUserIdx, generalManager, page * 6]
         )
 
-        return tsParListQueryResult.rows.map(row => new TSParListDetailEntity({
-            teamSpaceIdx: row.ts_idx,
-            teamSpaceName: row.ts_name,
-            roleIdx: row.ts_role_idx,
-            generalManagerNickname: row.nickname,
-            generalManagerEmail: row.email
-        }))
+        return tsParListQueryResult.rows
     }
     async getTSNameByIdx(teamSpaceEntity: TeamSpaceEntity, conn: Pool = this.pool): Promise<void> {
        const tsNameQueryResult = await conn.query(

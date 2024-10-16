@@ -14,6 +14,9 @@ import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
 import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
 import { ChannelListDto } from "./dto/channelList.dto"
+import { ChManagerDetailEntity } from "./entity/channelManagerDetail.entity"
+import { ChMemberDetailEntity } from "./entity/channelMemberDetail.entity"
+import { ChannelListEntity } from "./entity/channelList.entity"
 
 
 interface IChannelService {
@@ -124,11 +127,11 @@ export class ChannelService implements IChannelService {
        }
 
        return userList.map(user => new ChMemberDetailDto({
-            channelUserIdx: user.channelUserIdx,
-            roleIdx: user.roleIdx,
+            channelUserIdx: user.user_idx,
+            roleIdx: user.ts_role_idx,
             nickname: user.nickname,
             email: user.email,
-            profile: user.profile
+            profile: user.profile_image
        }))
     }
 
@@ -163,12 +166,10 @@ export class ChannelService implements IChannelService {
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
         if (tsMemberEntity.roleIdx === teamManager) {
-            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
-        }
-
-        if (tsMemberEntity.roleIdx === member) {
+            await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+        } else if (tsMemberEntity.roleIdx === member) {
             await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
-            return await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
+            await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
         }
     }
 
@@ -194,10 +195,10 @@ export class ChannelService implements IChannelService {
         }
 
         return channelList.map(channel => new ChManagerDetailDto({
-            channelIdx: channel.channelIdx,
-            channelName: channel.channelName,
-            managerIdx: channel.managerIdx,
-            managerNickname: channel.managerNickname
+            channelIdx: channel.ch_idx,
+            channelName: channel.ch_name,
+            managerIdx: channel.owner_idx,
+            managerNickname: channel.nickname
         }))
     }
 
@@ -214,10 +215,10 @@ export class ChannelService implements IChannelService {
         }
 
         return myChannelList.map(channel => new ChannelListDto({
-            channelIdx: channel.channelIdx,
-            channelName: channel.channelName,
-            roleIdx: channel.roleIdx,
-            isChannelOwner: channel.ownerIdx === channelMemberDto.channelUserIdx
+            channelIdx: channel.ch_idx,
+            channelName: channel.ch_name,
+            roleIdx: channel.ts_role_idx,
+            isChannelOwner: channel.owner_idx === channelMemberDto.channelUserIdx
         }))
     }
 }

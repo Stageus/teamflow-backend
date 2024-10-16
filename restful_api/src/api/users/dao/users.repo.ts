@@ -139,4 +139,13 @@ export class UserRepository implements IUserRepository {
             userEntity.email = emailQueryResult.rows[0].email
         }
     }
+
+    async getUserNickname(userIdx: number, conn: Pool): Promise<string> {
+        const emailQueryResult = await conn.query(
+            `SELECT nickname FROM team_flow_management.user WHERE user_idx=$1`,
+            [userIdx]
+        )
+
+        return emailQueryResult.rows[0].nickname
+    }
 }
