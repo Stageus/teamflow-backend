@@ -57,11 +57,11 @@ export class NotificationService implements INotificationService {
         for (let i = 0; i < invitedEntityList.length; i++) {
             const notification = new InvitedNotificationDto()
 
-            if (invitedEntityList[i].notificationTypeIdx === tsInvitation) {
-                notification.notificationIdx = invitedEntityList[i].notificationIdx
-                notification.teamSpaceIdx = invitedEntityList[i].teamSpaceIdx
-                notification.createdAt = invitedEntityList[i].createdAt
-            } else {
+            if (invitedEntityList[i].notification_type_idx === tsInvitation) {
+                notification.notificationIdx = invitedEntityList[i].notification_idx
+                notification.teamSpaceIdx = invitedEntityList[i].private_channel_idx
+                notification.createdAt = invitedEntityList[i].created_at
+            } else if (invitedEntityList[i].notification_type_idx === chInvitation) {
                 notification.notificationIdx = invitedEntityList[i].notificationIdx
                 notification.channelIdx = invitedEntityList[i].channelIdx
                 notification.createdAt = invitedEntityList[i].createdAt
