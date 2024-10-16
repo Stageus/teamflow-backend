@@ -6,9 +6,11 @@ import { UserDto } from "../users/dto/users.dto";
 import { CustomError } from "../../common/exception/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
-import { member, teamManager } from "../../common/const/ts_role";
+import { generalManager, member, teamManager } from "../../common/const/ts_role";
 import { TSMemberDetailEntity } from "./entity/tsMemberDetail.entity";
 import { TSParListDetailEntity } from "./entity/tsParListDetail.entity";
+import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
+import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
 
 interface ITeamSpaceService {
     createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void>
@@ -17,9 +19,9 @@ interface ITeamSpaceService {
     selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailEntity[]> 
     updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void>
     deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> 
-    selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberEntity[]> 
-    selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberEntity[]> 
-    selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailEntity[]> 
+    selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> 
+    selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> 
+    selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> 
 }
 
 export class TeamSpaceService implements ITeamSpaceService {
@@ -70,7 +72,7 @@ export class TeamSpaceService implements ITeamSpaceService {
         await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
     }
 
-    async selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailEntity[]> {
+    async selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             teamSpaceIdx: tsMemberDto.teamSpaceIdx
         })
@@ -81,7 +83,13 @@ export class TeamSpaceService implements ITeamSpaceService {
             throw this.customError.notFoundException('해당하는 소속 user 없음')
         }
 
-        return tsMemberList
+        return tsMemberList.map(member => new TSMemberDetailDto({
+            tsUserIdx: member.user_idx,
+            roleIdx: member.ts_role_idx,
+            nickname: member.nickname,
+            email: member.email,
+            profile: member.profile_image
+        }))
     }
 
     async updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> {
@@ -142,7 +150,7 @@ export class TeamSpaceService implements ITeamSpaceService {
         }
     }
 
-    async selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberEntity[]> {
+    async selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             tsUserIdx: tsMemberDto.tsUserIdx
         })
@@ -153,10 +161,14 @@ export class TeamSpaceService implements ITeamSpaceService {
             throw this.customError.notFoundException('소속된 teamspace가 없음')
         }
 
-        return tsList
+        return tsList.map(ts => new TSMemberDto({
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: ts.ts_role_idx
+        }))
     }
 
-    async selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberEntity[]> {{
+    async selectTSOwnList(teamSpaceDto: TeamSpaceDto): Promise<TSMemberDto[]> {{
         const teamSpaceEntity = new TeamSpaceEntity({
             ownerIdx: teamSpaceDto.ownerIdx,
         })
@@ -167,10 +179,15 @@ export class TeamSpaceService implements ITeamSpaceService {
             throw this.customError.notFoundException('더 이상 생성한 teamspace가 없음')
         }
 
-        return tsOwnList
+        return tsOwnList.map(ts => new TSMemberDto({
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: generalManager
+        })
+        )
     }}
 
-    async selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailEntity[]> {
+    async selectTSParList(tsMemberDto: TSMemberDto): Promise<TSParListDetailDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             tsUserIdx: tsMemberDto.tsUserIdx
         })
@@ -181,6 +198,12 @@ export class TeamSpaceService implements ITeamSpaceService {
             throw this.customError.notFoundException('더 이상 참여 중인 teamspace가 없음')
         }
 
-        return tsParList
+        return tsParList.map(ts => new TSParListDetailDto({
+            teamSpaceIdx: ts.ts_idx,
+            teamSpaceName: ts.ts_name,
+            roleIdx: ts.ts_role_idx,
+            generalManagerNickname: ts.nickname,
+            generalManagerEmail: ts.email
+        }))
     }
 }
