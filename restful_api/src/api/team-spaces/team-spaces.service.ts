@@ -77,6 +77,10 @@ export class TeamSpaceService {
 
         const tsMemberList = await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
 
+        if (tsMemberList.length === 0) {
+            throw this.customError.notFoundException('해당하는 소속 user 없음')
+        }
+
         return tsMemberList.map(member => new TSMemberDetailDto({
             tsUserIdx: member.tsUserIdx,
             roleIdx: member.roleIdx,
