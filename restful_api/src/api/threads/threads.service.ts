@@ -28,6 +28,10 @@ export class ThreadService implements IThreadService {
 
         const threadListEntity = await this.threadsRepository.getThreadList(threadsEntity, this.pool)
 
+        if (threadListEntity.length === 0) {
+            throw this.customError.notFoundException('thread가 없음')
+        }
+
         const threadList: ThreadsDto[] = []
         
         for(let i = 0; i < threadListEntity.length; i++) {
