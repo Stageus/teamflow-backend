@@ -7,8 +7,6 @@ import { CustomError } from "../../common/exception/customError";
 import { TSMemberEntity } from "./entity/tsMember.entity";
 import { TSMemberDto } from "./dto/tsMember.dto";
 import { generalManager, member, teamManager } from "../../common/const/ts_role";
-import { TSMemberDetailEntity } from "./entity/tsMemberDetail.entity";
-import { TSParListDetailEntity } from "./entity/tsParListDetail.entity";
 import { TSParListDetailDto } from "./dto/tsParListDetail.dto";
 import { TSMemberDetailDto } from "./dto/tsMemberDetail.dto";
 
@@ -16,7 +14,7 @@ interface ITeamSpaceService {
     createTeamSpace(teamSpaceDto: TeamSpaceDto): Promise<void>
     updateTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void>
     deleteTeamSpace(userDto: UserDto, teamSpaceDto: TeamSpaceDto): Promise<void> 
-    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailEntity[]> 
+    selectUserList(tsMemberDto: TSMemberDto): Promise<TSMemberDetailDto[]> 
     updateUserAuth(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void>
     deleteTSUser(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> 
     selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> 

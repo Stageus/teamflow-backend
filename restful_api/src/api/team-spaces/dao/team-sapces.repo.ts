@@ -2,9 +2,7 @@ import { Pool } from "pg";
 import { TeamSpaceEntity } from "../entity/teamSpace.entity";
 import { TSMemberEntity } from "../entity/tsMember.entity";
 import { generalManager, member, teamManager } from "../../../common/const/ts_role";
-import { TSMemberDetailEntity } from "../entity/tsMemberDetail.entity";
 import { notificationType, privateType, publicType } from "../../../common/const/ch_type";
-import { TSParListDetailEntity } from "../entity/tsParListDetail.entity";
 
 interface ITeamSpaceRepository {
     addTeamSpace(teamSpaceEntity: TeamSpaceEntity, conn: Pool): Promise<void>
