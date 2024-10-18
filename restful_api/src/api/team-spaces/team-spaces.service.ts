@@ -48,7 +48,8 @@ export class TeamSpaceService implements ITeamSpaceService {
         })
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
-
+        
+        // teamspace general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
@@ -63,6 +64,7 @@ export class TeamSpaceService implements ITeamSpaceService {
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // teamspace general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
@@ -77,6 +79,7 @@ export class TeamSpaceService implements ITeamSpaceService {
 
         const tsMemberList = await this.teamSpaceRepository.getTSMemberList(tsMemberDto.searchWord!, tsMemberEntity, this.pool)
 
+        // teamspace 소속 user가 없는 경우
         if (tsMemberList.length === 0) {
             throw this.customError.notFoundException('해당하는 소속 user 없음')
         }
@@ -102,21 +105,22 @@ export class TeamSpaceService implements ITeamSpaceService {
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // teamspace general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
+        // teamspace 소속 user가 아닌 경우
         if (!tsMemberEntity.roleIdx) {
             throw this.customError.notFoundException('해당 user는 teamspace 소속이 아님')
         }
 
+        // teamManager인 경우 member로, member인 경우 teamManager로 권한 변경
         if (tsMemberEntity.roleIdx === teamManager) {
             return await this.teamSpaceRepository.putManagerAuth(tsMemberEntity, this.pool)
-        }
-
-        if (tsMemberEntity.roleIdx === member) {
+        } else if (tsMemberEntity.roleIdx === member) {
             return await this.teamSpaceRepository.putMemberAuth(tsMemberEntity, this.pool)
         }
     }
@@ -133,17 +137,17 @@ export class TeamSpaceService implements ITeamSpaceService {
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // teamSpace의 general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
+        // teamManager인 경우와 member인 경우의 teamspace 소속 user 추방
         if (tsMemberEntity.roleIdx === teamManager) {
             return await this.teamSpaceRepository.deleteManager(tsMemberEntity, this.pool)
-        }
-
-        if (tsMemberEntity.roleIdx === member) {
+        } else if (tsMemberEntity.roleIdx === member) {
             return await this.teamSpaceRepository.deleteMember(tsMemberEntity, this.pool)
         }
     }
@@ -173,6 +177,7 @@ export class TeamSpaceService implements ITeamSpaceService {
 
         const tsOwnList = await this.teamSpaceRepository.getTSOwnList(teamSpaceDto.page!, teamSpaceEntity, this.pool)
         
+        // 생성한 teamspace가 없거나 더보기 버튼을 눌렀을 때 더 이상 생성한 teamspace가 없는 경우
         if (tsOwnList.length === 0) {
             throw this.customError.notFoundException('더 이상 생성한 teamspace가 없음')
         }
@@ -190,6 +195,7 @@ export class TeamSpaceService implements ITeamSpaceService {
             tsUserIdx: tsMemberDto.tsUserIdx
         })
 
+        // 참여중인 teamspace가 없거나 더보기 버튼을 눌렀을 때 더 이상 참여중인 teamSpace가 없는 경우
         const tsParList = await this.teamSpaceRepository.getTSParList(tsMemberDto.page!, tsMemberEntity, this.pool)
 
         if (tsParList.length === 0) {
