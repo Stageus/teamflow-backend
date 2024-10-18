@@ -152,6 +152,33 @@ export class TeamSpaceService implements ITeamSpaceService {
         }
     }
 
+    async deleteMeFromTS(userDto: UserDto, tsMemberDto: TSMemberDto): Promise<void> {
+        const teamSpaceEntity = new TeamSpaceEntity ({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx
+        })
+
+        const tsMemberEntity = new TSMemberEntity({
+            teamSpaceIdx: tsMemberDto.teamSpaceIdx,
+            tsUserIdx: userDto.userIdx
+        })
+
+        await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
+
+        // teamSpace의 general manager인 경우
+        if (userDto.userIdx === teamSpaceEntity.ownerIdx) {
+            await this.teamSpaceRepository.deleteTeamSpace(teamSpaceEntity, this.pool)
+        }
+
+        await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
+
+        // teamManager인 경우와 member인 경우의 teamspace 나가기
+        if (tsMemberEntity.roleIdx === teamManager) {
+            return await this.teamSpaceRepository.deleteManager(tsMemberEntity, this.pool)
+        } else if (tsMemberEntity.roleIdx === member) {
+            return await this.teamSpaceRepository.deleteMember(tsMemberEntity, this.pool)
+        }
+    }
+
     async selectTSList(tsMemberDto: TSMemberDto): Promise<TSMemberDto[]> {
         const tsMemberEntity = new TSMemberEntity({
             tsUserIdx: tsMemberDto.tsUserIdx

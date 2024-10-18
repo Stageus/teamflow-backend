@@ -69,6 +69,15 @@ teamSpaceRouter.delete(
     wrapper(controller.teamSpaceController.deleteTSUser.bind(controller.teamSpaceController))
 )
 
+teamSpaceRouter.delete(
+    "/:teamSpaceIdx/me",
+    checkVerifyToken.checkVerifyAccessToken(),
+    tsMemberDto.checkRegx([
+        ['teamSpaceIdx', regx.idxRegx],
+    ]),
+    wrapper(controller.teamSpaceController.leaveTS.bind(controller.teamSpaceController))
+)
+
 teamSpaceRouter.get(
     "/list",
     checkVerifyToken.checkVerifyAccessToken(),
