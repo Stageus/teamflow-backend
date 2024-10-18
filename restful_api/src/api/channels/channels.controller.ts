@@ -3,13 +3,13 @@ import { ChannelService } from "./channels.service";
 import { ChannelDto } from "./dto/channel.dto";
 import { UserDto } from "../users/dto/users.dto";
 import { ChannelMemberDto } from "./dto/channelMember.dto";
-import { ChannelMemberEntity } from "./entity/channelMember.entity";
 
 interface IChannelController {
     addChannel (req: Request, res: Response, next: NextFunction): Promise<void> 
     putChannelName (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannel (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannelUser(req: Request, res: Response, next: NextFunction): Promise<void>
+    leaveChannel(req: Request, res: Response, next: NextFunction): Promise<void>
     getChannelUserList(req: Request, res: Response, next: NextFunction): Promise<void>
     putChannelManager(req: Request, res: Response, next: NextFunction): Promise<void>
     getChannelList(req: Request, res: Response, next: NextFunction): Promise<void>

@@ -20,6 +20,7 @@ interface IChannelService {
     updateChannelName (userDto: UserDto, channelDto: ChannelDto): Promise<void>
     deleteChannel (userDto: UserDto, channelDto: ChannelDto): Promise<void> 
     deleteChannelUser(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
+    deleteMeFromChannel(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
     selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]>
     updateChannelManager(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void>
     selectChannelList(userDto: UserDto, channelDto: ChannelDto): Promise<ChManagerDetailDto[]>
@@ -121,6 +122,16 @@ export class ChannelService implements IChannelService {
             channelIdx: channelMemberDto.channelIdx,
             channelUserIdx: userDto.userIdx
         })
+
+        const channelEntity = new ChannelEntity({
+            channelIdx: channelMemberDto.channelIdx
+        })
+
+        await this.channelRepository.getChannelOwner(channelEntity, this.pool)
+
+        if (channelEntity.ownerIdx === channelMemberEntity.channelUserIdx) {
+            await this.channelRepository.leaveChannelManager(channelMemberEntity, this.pool)
+        }
 
         await this.channelRepository.deleteChannelUser(channelMemberEntity, this.pool)
     }
