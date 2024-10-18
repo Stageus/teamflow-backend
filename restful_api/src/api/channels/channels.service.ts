@@ -116,6 +116,15 @@ export class ChannelService implements IChannelService {
         await this.channelRepository.deleteChannelUser(channelMemberEntity, this.pool)
     }
 
+    async deleteMeFromChannel(userDto: UserDto, channelMemberDto: ChannelMemberDto): Promise<void> {
+        const channelMemberEntity = new ChannelMemberEntity({
+            channelIdx: channelMemberDto.channelIdx,
+            channelUserIdx: userDto.userIdx
+        })
+
+        await this.channelRepository.deleteChannelUser(channelMemberEntity, this.pool)
+    }
+
     async selectChannelUserList(channelMemberDto: ChannelMemberDto): Promise<ChMemberDetailDto[]> {
         const channelMemberEntity = new ChannelMemberEntity({
             channelIdx: channelMemberDto.channelIdx

@@ -3,6 +3,7 @@ import { ChannelService } from "./channels.service";
 import { ChannelDto } from "./dto/channel.dto";
 import { UserDto } from "../users/dto/users.dto";
 import { ChannelMemberDto } from "./dto/channelMember.dto";
+import { ChannelMemberEntity } from "./entity/channelMember.entity";
 
 interface IChannelController {
     addChannel (req: Request, res: Response, next: NextFunction): Promise<void> 
@@ -84,6 +85,24 @@ export class ChannelController implements IChannelController {
         })
 
         await this.channelService.deleteChannelUser(userDto, channelMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send({ accessToken : req.body.accessToken })
+        }
+    }
+
+    async leaveChannel(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        const channelMemberDto = new ChannelMemberDto({
+            channelIdx: parseInt(req.params.channelIdx)
+        })
+
+        await this.channelService.deleteMeFromChannel(userDto, channelMemberDto)
 
         if (!req.body.accessToken) {
             res.status(200).send()
