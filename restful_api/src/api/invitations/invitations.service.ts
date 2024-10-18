@@ -46,13 +46,16 @@ export class InvitationService implements IInvitationService {
 
         await this.teamSpacaeRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // teamSpace의 general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manger만 가능')
         }
 
         await this.invitationRepository.getIsTSInvited(tsInvitationEntity, this.pool)
 
+        // 이미 초대된 유저인지 여부
         if (tsInvitationEntity.invitedAt) {
+            // 초대 시간에 따른 재발송
             if (new Date().getTime() - tsInvitationEntity.invitedAt.getTime() <= 24 * 60 * 60 * 1000 * 7 ) {
                 throw this.customError.conflictException('이미 초대된 user')
             }
@@ -93,13 +96,16 @@ export class InvitationService implements IInvitationService {
 
         await this.channelRepository.getChannelOwner(channelEntity, this.pool)
 
+        // channel manager인지 여부
         if (userDto.userIdx !== channelEntity.ownerIdx) {
             throw this.customError.forbiddenException('channel manager만 가능')
         }
 
         await this.invitationRepository.getIsChannelInvited(chInvitationEntity, this.pool)
 
+        // channel 초대 여부 확인
         if (chInvitationEntity.invitedAt) {
+            // channel 초대 시간에 따른 재발송 여부
             if (new Date().getTime() - chInvitationEntity.invitedAt.getTime() <= 24 * 60 * 60 * 1000 * 7 ) {
                 throw this.customError.conflictException('이미 초대된 user')
             }
