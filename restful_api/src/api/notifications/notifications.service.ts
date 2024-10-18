@@ -48,6 +48,7 @@ export class NotificationService implements INotificationService {
 
         const invitedEntityList = await this.notificationRepository.getInvitationList(notificationDto.page!, invitedNotificationEntity, this.client)
 
+        // 초대된 목록이 없거나 더보기 버튼을 눌렀을 경우 더 이상 초대된 목록이 없는 경우
         if (invitedEntityList.length === 0) {
             throw this.customError.notFoundException('더 이상 초대된 목록이 없음')
         }
@@ -57,6 +58,7 @@ export class NotificationService implements INotificationService {
         for (let i = 0; i < invitedEntityList.length; i++) {
             const notification = new InvitedNotificationDto()
 
+            // teamSpace초대인지 channel초대인지에 따른 로직
             if (invitedEntityList[i].notification_type_idx === tsInvitation) {
                 notification.notificationIdx = invitedEntityList[i].notification_idx
                 notification.teamSpaceIdx = invitedEntityList[i].private_channel_idx
@@ -93,6 +95,7 @@ export class NotificationService implements INotificationService {
 
             await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
+            // 이미 teamSpace 소속 user인 경우
             if (tsMemberEntity.roleIdx) {
                 throw this.customError.conflictException('이미 teamspace 소속 user')
             }
@@ -106,6 +109,7 @@ export class NotificationService implements INotificationService {
 
             const isChUser = await this.channelRepository.getIsChannelUser(chMemberEntity, this.pool)
 
+            // 이미 channel 소속 user인 경우
             if (isChUser) {
                 throw this.customError.conflictException('이미 채널 소속 user')
             }
@@ -122,6 +126,7 @@ export class NotificationService implements INotificationService {
 
         await this.notificationRepository.getInvitation(invitedNotificationEntity, this.client)
 
+        // teamspace 초대인지 channel 초대인지에 따른 로직 처리
         if (invitedNotificationEntity.notificationTypeIdx === tsInvitation) {
             await this.notificationRepository.rejectTSInvitation(invitedNotificationEntity, this.pool)
         } else if (invitedNotificationEntity.notificationTypeIdx === chInvitation) {
