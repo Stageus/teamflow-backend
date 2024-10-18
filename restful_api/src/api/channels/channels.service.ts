@@ -14,10 +14,6 @@ import { ChMemberDetailDto } from "./dto/channelMemberDetail.dto"
 import { TeamSpaceEntity } from "../team-spaces/entity/teamSpace.entity"
 import { ChManagerDetailDto } from "./dto/channelManagerDetail.dto"
 import { ChannelListDto } from "./dto/channelList.dto"
-import { ChManagerDetailEntity } from "./entity/channelManagerDetail.entity"
-import { ChMemberDetailEntity } from "./entity/channelMemberDetail.entity"
-import { ChannelListEntity } from "./entity/channelList.entity"
-
 
 interface IChannelService {
     createChannel (channelDto: ChannelDto): Promise<void>
@@ -56,6 +52,7 @@ export class ChannelService implements IChannelService {
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
+        // teamManager인지 여부
         if (tsMemberEntity.roleIdx !== teamManager) {
             throw this.customError.forbiddenException('team manager만 가능')
         }
@@ -71,6 +68,7 @@ export class ChannelService implements IChannelService {
 
         await this.channelRepository.getChannelOwner(channelEntity, this.pool)
 
+        // 해당 channel의 manager인지 여부
         if (userDto.userIdx !== channelEntity.ownerIdx) {
             throw this.customError.forbiddenException('해당 channel 소유자만 가능')
         }
@@ -85,6 +83,7 @@ export class ChannelService implements IChannelService {
 
         await this.channelRepository.getChannelOwner(channelEntity, this.pool)
 
+        // 해당 channel의 manager인지 여부
         if (userDto.userIdx !== channelEntity.ownerIdx) {
             throw this.customError.forbiddenException('해당 channel 소유자만 가능')
         }
@@ -104,10 +103,12 @@ export class ChannelService implements IChannelService {
 
         await this.channelRepository.getChannelOwner(channelEntity, this.pool)
 
+        // 해당 channel의 manager인지 여부
         if (userDto.userIdx !== channelEntity.ownerIdx) {
             throw this.customError.forbiddenException('해당 channel 소유자만 가능')
         }
 
+        // 본인을 추방시키려는 경우
         if (channelEntity.ownerIdx === channelMemberEntity.channelUserIdx) {
             throw this.customError.badRequestException('본인은 추방할 수 없음')
         }
@@ -122,6 +123,7 @@ export class ChannelService implements IChannelService {
 
        const userList = await this.channelRepository.getChannelUserList(channelMemberDto.searchWord!, channelMemberEntity, this.pool)
 
+       // 검색된 user가 없는 경우
        if (userList.length === 0) {
             throw this.customError.notFoundException('검색된 user가 없음')
        }
@@ -148,6 +150,7 @@ export class ChannelService implements IChannelService {
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // teamspace general manger가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manger만 가능')
         }
@@ -159,12 +162,14 @@ export class ChannelService implements IChannelService {
 
         const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
 
+        // channel user가 아닌 경우
         if (!isChannelUser) {
             await this.channelRepository.createChannelUser(channelMemberEntity, this.pool)
         }
 
         await this.teamSpaceRepository.getTSMemberByIdx(tsMemberEntity, this.pool)
 
+        // teammanager인지 member인지에 따른 로직 처리
         if (tsMemberEntity.roleIdx === teamManager) {
             await this.channelRepository.putChannelManager(teamSpaceEntity, channelMemberEntity, this.pool)
         } else if (tsMemberEntity.roleIdx === member) {
@@ -184,12 +189,14 @@ export class ChannelService implements IChannelService {
 
         await this.teamSpaceRepository.getTeamSpaceOwner(teamSpaceEntity, this.pool)
 
+        // general manager가 아닌 경우
         if (userDto.userIdx !== teamSpaceEntity.ownerIdx) {
             throw this.customError.forbiddenException('general manager만 가능')
         }
 
         const channelList = await this.channelRepository.getChannelList(channelDto.searchWord!, channelEntity, this.pool)
 
+        // 검색된 channel이 없는 경우
         if (channelList.length === 0) {
             throw this.customError.notFoundException('검색된 채널이 없습니다.')
         }
@@ -210,6 +217,7 @@ export class ChannelService implements IChannelService {
 
         const myChannelList = await this.channelRepository.getMyChannelList(channelMemberEntity, this.pool)
 
+        // 내가 속한 channel이 없는 경우
         if (myChannelList.length === 0) {
             throw this.customError.notFoundException('속한 비공개 채널이 없음')
         }
