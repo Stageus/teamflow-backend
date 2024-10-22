@@ -4,7 +4,6 @@ import { ChannelMemberEntity } from "../entity/channelMember.entity";
 import { TeamSpaceEntity } from "../../team-spaces/entity/teamSpace.entity";
 import { privateType } from "../../../common/const/ch_type";
 
-
 interface IChannelRepository {
     createChannel (channelEntity: ChannelEntity, conn: Pool): Promise<void>
     getChannelOwner (channelEntity: ChannelEntity, conn: Pool): Promise<void>
@@ -18,6 +17,7 @@ interface IChannelRepository {
     putChannelManager(teamSpaceEntity: TeamSpaceEntity, channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
     getChannelList(searchWord: string, channelEntity: ChannelEntity, conn: Pool): Promise<any[]>
     getMyChannelList(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<any[]>
+    leaveChannelManager(channelMemberEntity: ChannelMemberEntity, conn: Pool): Promise<void>
 }
 
 export class ChannelRepository implements IChannelRepository {
@@ -147,5 +147,12 @@ export class ChannelRepository implements IChannelRepository {
         )
 
         return myChannelListQueryResult.rows
+    }
+
+    async leaveChannelManager(channelMemberEntity: ChannelMemberEntity, conn: Pool = this.pool): Promise<void> {
+        await conn.query(
+            `UPDATE team_flow_management.channel SET owner_idx=null WHERE ch_idx = $2`,
+            [channelMemberEntity.channelIdx]
+        )
     }
 }

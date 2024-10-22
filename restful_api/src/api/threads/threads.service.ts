@@ -36,15 +36,14 @@ export class ThreadService implements IThreadService {
 
         const isChannelUser = await this.channelRepository.getIsChannelUser(channelMemberEntity, this.pool)
 
-        console.log(userDto.userIdx)
-        console.log(isChannelUser)
-
+        // channel 소속 유저가 아닌 경우
         if (!isChannelUser) {
             throw this.customError.forbiddenException('channel 소속 user가 아님')
         }
 
         const threadListEntity = await this.threadsRepository.getThreadList(threadsEntity, this.pool)
 
+        // 작성한 쓰레드가 없는 경우
         if (threadListEntity.length === 0) {
             throw this.customError.notFoundException('thread가 없음')
         }
@@ -56,14 +55,14 @@ export class ThreadService implements IThreadService {
                 channelIdx: threadsDto.channelIdx
             })
 
-            thread.threadIdx = threadListEntity[i].thread_idx
-
+            // 쓰레드의 내용 작성이 있는 경우
             if (threadListEntity[i].content) {
                 thread.content = threadListEntity[i].content
             }
 
             const threadFile = await this.threadsRepository.getThreadFileList(thread.threadIdx!, this.pool)
 
+            // thread의 파일이 있는 경우
             if (threadFile.length !== 0) {
                 thread.file = []
 
@@ -72,14 +71,15 @@ export class ThreadService implements IThreadService {
                 }
             }
 
-            thread.authorName = await this.userRepository.getUserNickname(threadListEntity[i].user_idx, this.pool)
-
+            // 로그인한 user와 작성자의 일치 여부
             if (threadListEntity[i].user_idx === userDto.userIdx) {
                 thread.isAuthor = true
             } else {
                 thread.isAuthor = false
             }
 
+            thread.authorName = await this.userRepository.getUserNickname(threadListEntity[i].user_idx, this.pool)
+            thread.threadIdx = threadListEntity[i].thread_idx
             thread.createdAt = threadListEntity[i].createdAt
             thread.isUpdated = threadListEntity[i].isUpdated
             thread.isMention = threadListEntity[i].isMention

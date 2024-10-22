@@ -39,6 +39,7 @@ export class UserService implements IUserService {
 
         await this.userRepository.findUserByEmail(userEntity, this.pool)
         
+        // 회원탈퇴하고 재가입하는 경우
         if (userEntity.isDeleted) {
             return await this.userRepository.reSignUp(userEntity, this.pool)
         }
@@ -52,6 +53,7 @@ export class UserService implements IUserService {
         })
 
         await this.userRepository.getUserProfile(userEntity, this.pool)
+        
         const tsCountResult = await this.userRepository.getUserTSCount(userEntity, this.pool)
 
         userDto.nickname = userEntity.nickname

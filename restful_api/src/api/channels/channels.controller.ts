@@ -9,6 +9,7 @@ interface IChannelController {
     putChannelName (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannel (req: Request, res: Response, next: NextFunction): Promise<void>
     deleteChannelUser(req: Request, res: Response, next: NextFunction): Promise<void>
+    leaveChannel(req: Request, res: Response, next: NextFunction): Promise<void>
     getChannelUserList(req: Request, res: Response, next: NextFunction): Promise<void>
     putChannelManager(req: Request, res: Response, next: NextFunction): Promise<void>
     getChannelList(req: Request, res: Response, next: NextFunction): Promise<void>
@@ -84,6 +85,24 @@ export class ChannelController implements IChannelController {
         })
 
         await this.channelService.deleteChannelUser(userDto, channelMemberDto)
+
+        if (!req.body.accessToken) {
+            res.status(200).send()
+        } else {
+            res.status(203).send({ accessToken : req.body.accessToken })
+        }
+    }
+
+    async leaveChannel(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const userDto = new UserDto({
+            userIdx: req.body.userIdx
+        })
+
+        const channelMemberDto = new ChannelMemberDto({
+            channelIdx: parseInt(req.params.channelIdx)
+        })
+
+        await this.channelService.deleteMeFromChannel(userDto, channelMemberDto)
 
         if (!req.body.accessToken) {
             res.status(200).send()
