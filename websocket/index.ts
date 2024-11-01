@@ -87,8 +87,16 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('join_channel', async (channelIdx : number) => {
+    socket.on('join_channel', (channelIdx : number) => {
         socket.join(channelIdx.toString())
+    })
+
+    socket.on('exit_teamspace', async (teamspaceIdx : number) => {
+
+    })
+
+    socket.on('exit_channel', (channelIdx : number) => {
+        socket.leave(channelIdx.toString())
     })
 })
 
