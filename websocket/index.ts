@@ -40,7 +40,7 @@ io.use((socket, next) => {
         if (!refreshTokenHeader) {
             return next(new Error('need to login'))
         }
-        
+
         const refreshTokenDecoded = jwt.verify(
             refreshTokenHeader,
             jwtRefreshSecretKey
