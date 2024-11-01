@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import pool from './common/database/postgresql'
