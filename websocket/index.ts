@@ -3,6 +3,7 @@ import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import pool from './common/database/postgresql'
+import { privateType } from './common/const/ch_type'
 
 const app = express()
 const server = http.createServer(app)
@@ -17,13 +18,17 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     socket.on('join_teamspace', async (teamspaceIdx : number) => {
         const channelIdxQueryResult = await pool.query(
-            `SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1`,
-            [teamspaceIdx]
+            `SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx <> $2`,
+            [teamspaceIdx, privateType]
         )
 
         for (let i = 0; i < channelIdxQueryResult.rows.length; i++) {
             socket.join(channelIdxQueryResult.rows[i])
         }
+    })
+
+    socket.on('join_channel', async (channelIdx : number) => {
+
     })
 })
 
