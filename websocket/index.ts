@@ -76,6 +76,10 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
+    if (socket.data.accessToken) {
+        socket.emit('accessToken_resign', { accessToken : socket.data.accessToken })
+    }
+
     socket.on('join_teamspace', async (teamspaceIdx : number) => {
         const channelIdxQueryResult = await pool.query(
             `SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx <> $2`,
@@ -83,20 +87,35 @@ io.on('connection', (socket) => {
         )
 
         for (let i = 0; i < channelIdxQueryResult.rows.length; i++) {
-            socket.join(channelIdxQueryResult.rows[i])
+            socket.join(channelIdxQueryResult.rows[i].ch_idx.toString())
         }
+
+        console.log(socket.rooms)
     })
 
     socket.on('join_channel', (channelIdx : number) => {
         socket.join(channelIdx.toString())
+
+        console.log(socket.rooms)
     })
 
     socket.on('exit_teamspace', async (teamspaceIdx : number) => {
+        const channelIdxQueryResult = await pool.query(
+            `SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx = $1`,
+            [teamspaceIdx]
+        )
 
+        for (let i of channelIdxQueryResult.rows) {
+            socket.leave(i.ch_idx.toString())
+        }
+
+        console.log(socket.rooms)
     })
 
     socket.on('exit_channel', (channelIdx : number) => {
         socket.leave(channelIdx.toString())
+
+        console.log(socket.rooms)
     })
 })
 
