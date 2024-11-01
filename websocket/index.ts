@@ -17,16 +17,11 @@ const io = new Server(server, {
 })
 
 io.use((socket, next) => {
-    console.log(socket)
     const accessTokenHeader = socket.handshake.headers.accesstoken?.toString()
     const refreshTokenHeader = socket.handshake.headers.refreshtoken?.toString()
 
     if (!accessTokenHeader) {
         return next(new Error('no token provided'))
-    }
-
-    if (!refreshTokenHeader) {
-        return next(new Error('need to login'))
     }
 
     let accessTokenValid = false
@@ -42,6 +37,10 @@ io.use((socket, next) => {
     let accessTokenDecoded
 
     if (!accessTokenValid) {
+        if (!refreshTokenHeader) {
+            return next(new Error('need to login'))
+        }
+        
         const refreshTokenDecoded = jwt.verify(
             refreshTokenHeader,
             jwtRefreshSecretKey

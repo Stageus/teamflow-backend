@@ -49,10 +49,6 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                     throw this.customError.unauthorizedException('access token header is missing')
                 }
 
-                if (!refreshToken) {
-                    throw this.customError.unauthorizedException('need to login')
-                }
-
                 let accessTokenValid = false
 
                 jwt.verify(accessTokenHeader, jwtAccessSecretKey, (err, decoded) => {
@@ -66,6 +62,10 @@ export class CheckVerifyToken implements ICheckVerifyToken  {
                 let accessTokenDecoded
 
                 if (!accessTokenValid) {
+                    if (!refreshToken) {
+                        throw this.customError.unauthorizedException('need to login')
+                    }
+                    
                     const refreshTokenDecoded = jwt.verify(
                         refreshToken,
                         jwtRefreshSecretKey
