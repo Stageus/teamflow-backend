@@ -19,7 +19,7 @@ export function generateSignUpToken(userDto: UserDto) {
 export function generateAccessToken(userDto: UserDto) {
     return jwt.sign(
         {
-            user_idx: userDto.userIdx
+            userIdx: userDto.userIdx
         },
         jwtAccessSecretKey,
         {
@@ -32,7 +32,7 @@ export function generateAccessToken(userDto: UserDto) {
 export function generateRefreshToken(userDto: UserDto) {
     return jwt.sign(
         {
-            user_idx: userDto.userIdx
+            userIdx: userDto.userIdx
         },
         jwtRefreshSecretKey,
         {
