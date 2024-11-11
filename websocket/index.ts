@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import pool from './common/database/postgresql'
 import { privateType } from './common/const/ch_type'
 import jwt from 'jsonwebtoken'
-import { jwtAccessSecretKey, jwtRefreshSecretKey } from './common/const/environment'
+import { jwtAccessSecretKey, jwtRefreshSecretKey, serverPort } from './common/const/environment'
 
 const app = express()
 const server = http.createServer(app)
@@ -76,22 +76,12 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
-    socket.on('join_teamspace', async (teamspaceIdx : number) => {
-        const channelIdxQueryResult = await pool.query(
-            `SELECT ch_idx FROM team_flow_management.channel WHERE ts_idx=$1 AND ch_type_idx <> $2`,
-            [teamspaceIdx, privateType]
-        )
-
-        for (let i = 0; i < channelIdxQueryResult.rows.length; i++) {
-            socket.join(channelIdxQueryResult.rows[i])
-        }
-    })
-
-    socket.on('join_channel', async (channelIdx : number) => {
-        socket.join(channelIdx.toString())
-    })
+    
+    if (socket.data.accessToken) {
+        socket.emit('accessToken_resign', { accessToken : socket.data.accessToken })
+    }
 })
-
-server.listen(3002, () => {
-    console.log(`server running on port 3002`)
+  
+server.listen(serverPort, () => {
+    console.log(`server running on port ${serverPort}`)
 })
